@@ -8,13 +8,16 @@ public class BubbleGameActivity extends PortraitAdmobGameActivity {
 
 	@Override
 	protected void onCreateResources() {
-
+		
 	}
 
 	@Override
 	protected Scene onCreateScene() {
-		// TODO Auto-generated method stub
-		return null;
+		Scene scene = new Scene();
+		MathExpanableMenu mMenu = new MathExpanableMenu(10, 300, this, mCamera, ratio);
+		mMenu.init();
+		scene.setChildScene(mMenu);
+		return scene;
 	}
 
 }
