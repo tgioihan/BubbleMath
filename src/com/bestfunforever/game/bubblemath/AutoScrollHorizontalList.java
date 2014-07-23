@@ -17,19 +17,38 @@ public class AutoScrollHorizontalList extends HorizontalListView {
 		this.scrollVelocity = scrollValue;
 	}
 
+	private boolean run;
 
-	public AutoScrollHorizontalList(SimpleBaseGameActivity Context, float pX, float pY, float pWidth, float pHeight,
+	public AutoScrollHorizontalList(SimpleBaseGameActivity Context, float pX,
+			float pY, float pWidth, float pHeight,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(Context, pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 	}
-	
+
 	@Override
 	protected void onManagedUpdate(float pSecondsElapsed) {
 		// TODO Auto-generated method stub
 		super.onManagedUpdate(pSecondsElapsed);
-		if(mAdapter==null&&mAdapter.getCount() == 0)
-			return;
-		scrollByX(scrollVelocity);
+		if(run){
+			if (mAdapter == null && mAdapter.getCount() == 0)
+				return;
+			scrollByX(scrollVelocity);
+		}
+	}
+
+	/**
+	 * @return the run
+	 */
+	public boolean isRun() {
+		return run;
+	}
+
+	/**
+	 * @param run
+	 *            the run to set
+	 */
+	public void setRun(boolean run) {
+		this.run = run;
 	}
 
 }
