@@ -3,6 +3,7 @@ package com.bestfunforever.game.bubblemath;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
+import org.andengine.entity.shape.IAreaShape;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.text.TickerText.TickerTextOptions;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable.ITickerTextListenner;
+import com.bestfunforever.andengine.uikit.listview.OnItemClickListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 
@@ -64,12 +66,13 @@ public class BubbleGameActivity extends PortraitAdmobGameActivity implements IOn
 		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBgBitmapTextureAtlas, this,
 				"bg5.jpg", 0, 0); // 64x32
 		mBgBitmapTextureAtlas.load();
-		
-		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(),512, 512, TextureOptions.BILINEAR);
+
+		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		customFont = FontFactory.createStrokeFromAsset(getFontManager(),customFontTexture , getAssets(), "UVNBanhMi.TTF", (float)50*ratio, true, Color.WHITE, 2, Color.RED);
+		customFont = FontFactory.createStrokeFromAsset(getFontManager(), customFontTexture, getAssets(),
+				"UVNBanhMi.TTF", (float) 50 * ratio, true, Color.WHITE, 2, Color.RED);
 		customFont.load();
-		
+
 		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), (int) (256 * ratio),
 				(int) (256 * ratio), Typeface.create(Typeface.DEFAULT, Typeface.BOLD), (int) (32 * ratio));
 		this.mFont.load();
@@ -89,6 +92,14 @@ public class BubbleGameActivity extends PortraitAdmobGameActivity implements IOn
 		mListView.setAdapter(adapter);
 		mListView.setSelection(Integer.MAX_VALUE / 2);
 		mListView.setScrollVelocity(-3f);
+		scene.registerTouchArea(mListView);
+		mListView.setOnItemClickListenner(new OnItemClickListenner() {
+
+			@Override
+			public void onClick(IAreaShape view, int position) {
+				mListView.setRun(false);
+			}
+		});
 
 		MathExpanableMenu mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this, mCamera, ratio);
 		mMenu.init();
@@ -103,10 +114,13 @@ public class BubbleGameActivity extends PortraitAdmobGameActivity implements IOn
 				- messageRegion.getHeight() * ratio, messageRegion.getWidth() * ratio, messageRegion.getHeight()
 				* ratio, messageRegion, getVertexBufferObjectManager());
 		scene.attachChild(messageFrame);
-		
-		TickerTextManagable tickTextManagable = new TickerTextManagable(10*ratio, 10*ratio, mFont, "Giup minh giai bai toan nay voi , kho qua , hu hu", new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()-2*10*ratio, HorizontalAlign.CENTER, 15), getVertexBufferObjectManager());
+
+		TickerTextManagable tickTextManagable = new TickerTextManagable(10 * ratio, 10 * ratio, mFont,
+				"Giup minh giai bai toan nay voi , kho qua , hu hu", new TickerTextOptions(AutoWrap.WORDS,
+						messageFrame.getWidth() - 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
+				getVertexBufferObjectManager());
 		tickTextManagable.setTickerTextListenner(new ITickerTextListenner() {
-			
+
 			@Override
 			public void onTickerTextComplete() {
 				mListView.setRun(true);
