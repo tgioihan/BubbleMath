@@ -1,5 +1,6 @@
 package com.bestfunforever.game.bubblemath;
 
+import org.andengine.entity.shape.IAreaShape;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
