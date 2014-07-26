@@ -23,6 +23,15 @@ public class MathAdapter extends SimpleAdapter {
 	private int max;
 
 	private String[] operands = { "+", "-", "=" };
+	private int type;
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
 
 	public MathAdapter(TiledTextureRegion iconHighScoreMenuRegion, int max, float ratio, Font font,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
@@ -45,7 +54,6 @@ public class MathAdapter extends SimpleAdapter {
 		if (view == null) {
 			view = new Item(ratio, mFont, mRegion, pVertexBufferObjectManager);
 		}
-		int type = random.nextInt(2);
 		Object obj = null;
 		if (type == 0) {
 			// number
