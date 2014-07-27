@@ -1,10 +1,10 @@
 package com.bestfunforever.game.bubblemath;
 
+import org.andengine.entity.shape.IAreaShape;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import com.bestfunforever.andengine.uikit.listview.HorizontalListView;
-import com.bestfunforever.andengine.uikit.listview.ListView;
 
 public class AutoScrollHorizontalList extends HorizontalListView {
 	private float scrollVelocity = 2;
@@ -23,6 +23,7 @@ public class AutoScrollHorizontalList extends HorizontalListView {
 			float pY, float pWidth, float pHeight,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(Context, pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
+		setMoveEnable(run);
 	}
 
 	@Override
@@ -50,5 +51,6 @@ public class AutoScrollHorizontalList extends HorizontalListView {
 	public void setRun(boolean run) {
 		this.run = run;
 	}
+
 
 }

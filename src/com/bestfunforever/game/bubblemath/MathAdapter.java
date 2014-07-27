@@ -1,10 +1,16 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.util.Random;
+
 import org.andengine.entity.shape.IAreaShape;
+import org.andengine.opengl.font.Font;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import android.util.Log;
+
+import com.bestfunforever.andengine.uikit.entity.BaseSprite.State;
 import com.bestfunforever.andengine.uikit.listview.SimpleAdapter;
 
 public class MathAdapter extends SimpleAdapter {
@@ -12,12 +18,30 @@ public class MathAdapter extends SimpleAdapter {
 	private TiledTextureRegion mRegion;
 	private float ratio;
 	private VertexBufferObjectManager pVertexBufferObjectManager;
+	private Font mFont;
+	private Random random;
+	private int max;
 
-	public MathAdapter(TiledTextureRegion iconHighScoreMenuRegion, float ratio, VertexBufferObjectManager pVertexBufferObjectManager) {
+	private String[] operands = { "+", "-", "=" };
+	private int type;
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public MathAdapter(TiledTextureRegion iconHighScoreMenuRegion, int max, float ratio, Font font,
+			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super();
 		this.mRegion = iconHighScoreMenuRegion;
 		this.ratio = ratio;
 		this.pVertexBufferObjectManager = pVertexBufferObjectManager;
+		this.mFont = font;
+		this.max = max;
+		random = new Random();
 	}
 
 	@Override
@@ -28,32 +52,38 @@ public class MathAdapter extends SimpleAdapter {
 	@Override
 	public IAreaShape getView(int pos, IAreaShape view) {
 		if (view == null) {
-			view = new Item(ratio, mRegion, pVertexBufferObjectManager);
+			view = new Item(ratio, mFont, mRegion, pVertexBufferObjectManager);
 		}
+		Object obj = null;
+		if (type == 0) {
+			// number
+			obj = random.nextInt(max);
+		} else {
+			obj = operands[random.nextInt(3)];
+		}
+		Log.d("", "MathAdapter getview at " + pos + " with value " + obj);
+		((Item) view).setText(obj);
+		((Item) view).setState(State.NORMAL);
 		return view;
 	}
 
 	@Override
 	public float getChildWidth() {
-		// TODO Auto-generated method stub
 		return mRegion.getWidth() * ratio;
 	}
 
 	@Override
 	public float getChildHeight() {
-		// TODO Auto-generated method stub
 		return mRegion.getWidth() * ratio;
 	}
 
 	@Override
 	public int getItemViewType(int position) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public int getViewTypeCount() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 

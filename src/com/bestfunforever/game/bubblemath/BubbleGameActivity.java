@@ -19,102 +19,167 @@ import org.andengine.util.HorizontalAlign;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
+import com.bestfunforever.andengine.uikit.entity.SeekBar;
+import com.bestfunforever.andengine.uikit.entity.SeekBar.ISeekBarListenner;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable.ITickerTextListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 
-public class BubbleGameActivity extends PortraitAdmobGameActivity implements IOnMenuItemClickListener {
+public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
+		implements IOnMenuItemClickListener, ITickerTextListenner,
+		ISeekBarListenner {
 
-	private TiledTextureRegion iconHighScoreMenuRegion;
-	private AutoScrollHorizontalList mListView;
-	private TiledTextureRegion childFaceRegion;
-	private TextureRegion mBgTextureRegion;
-	private TiledTextureRegion messageRegion;
-	private Font mFont;
-	private BitmapTextureAtlas customFontTexture;
-	private StrokeFont customFont;
+	protected TiledTextureRegion childFaceRegion;
+	protected TextureRegion mBgTextureRegion;
+	protected TiledTextureRegion messageRegion;
+	protected Font mFont;
+	protected BitmapTextureAtlas customFontTexture;
+	protected StrokeFont customFont;
+	protected Scene scene;
+	protected BitmapTextureAtlas customFontBigTexture;
+	protected StrokeFont customFontBig;
+	protected Sprite child;
+	protected Handler handler;
+	protected TiledTextureRegion progressRegion;
+	protected TiledTextureRegion starRegion;
+	protected SeekBar mSeekBar;
+
+	protected float marginTextMath = 30f;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		handler = new Handler();
+	}
 
 	@Override
 	protected void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (140),
-				(int) (140), TextureOptions.BILINEAR);
-		iconHighScoreMenuRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(highscoreMenuAtlas, this,
-				"high_score.png", 0, 0, 1, 1);
-		highscoreMenuAtlas.load();
 
-		BitmapTextureAtlas childAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (195), (int) (192),
+		BitmapTextureAtlas progressAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), (int) (461), (int) (45),
 				TextureOptions.BILINEAR);
-		childFaceRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(childAtlas, this,
-				"child_face.png", 0, 0, 1, 1);
+		progressRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(progressAtlas, this, "bg_progress.png",
+						0, 0, 1, 1);
+		progressAtlas.load();
+
+		BitmapTextureAtlas starAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), (int) (74), (int) (93),
+				TextureOptions.BILINEAR);
+		starRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(starAtlas, this, "star.png", 0, 0, 1, 1);
+		starAtlas.load();
+
+		BitmapTextureAtlas childAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), (int) (195), (int) (192),
+				TextureOptions.BILINEAR);
+		childFaceRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(childAtlas, this, "child_face.png", 0, 0,
+						1, 1);
 		childAtlas.load();
 
-		BitmapTextureAtlas messageAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (356), (int) (152),
+		BitmapTextureAtlas messageAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), (int) (356), (int) (152),
 				TextureOptions.BILINEAR);
-		messageRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(messageAtlas, this,
-				"message_frame.png", 0, 0, 1, 1);
+		messageRegion = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(messageAtlas, this, "message_frame.png",
+						0, 0, 1, 1);
 		messageAtlas.load();
 
-		BitmapTextureAtlas mBgBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 640, 960,
-				TextureOptions.BILINEAR);
-		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBgBitmapTextureAtlas, this,
-				"bg5.jpg", 0, 0); // 64x32
+		BitmapTextureAtlas mBgBitmapTextureAtlas = new BitmapTextureAtlas(
+				this.getTextureManager(), 640, 960, TextureOptions.BILINEAR);
+		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory
+				.createFromAsset(mBgBitmapTextureAtlas, this, "bg5.jpg", 0, 0); // 64x32
 		mBgBitmapTextureAtlas.load();
-		
-		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(),512, 512, TextureOptions.BILINEAR);
+
+		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(),
+				512, 512, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		customFont = FontFactory.createStrokeFromAsset(getFontManager(),customFontTexture , getAssets(), "UVNBanhMi.TTF", (float)50*ratio, true, Color.WHITE, 2, Color.RED);
+		customFont = FontFactory.createStrokeFromAsset(getFontManager(),
+				customFontTexture, getAssets(), "UVNBanhMi.TTF", (float) 80
+						* ratio, true, Color.WHITE, 2, Color.RED);
 		customFont.load();
-		
-		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), (int) (256 * ratio),
-				(int) (256 * ratio), Typeface.create(Typeface.DEFAULT, Typeface.BOLD), (int) (32 * ratio));
+
+		customFontBigTexture = new BitmapTextureAtlas(this.getTextureManager(),
+				1024, 1024, TextureOptions.BILINEAR);
+		FontFactory.setAssetBasePath("font/");
+		customFontBig = FontFactory.createStrokeFromAsset(getFontManager(),
+				customFontBigTexture, getAssets(), "UVNBanhMi.TTF", (float) 145
+						* ratio, true, Color.WHITE, 2, Color.RED);
+		customFontBig.load();
+
+		this.mFont = FontFactory.create(this.getFontManager(),
+				this.getTextureManager(), (int) (256 * ratio),
+				(int) (256 * ratio),
+				Typeface.create(Typeface.DEFAULT, Typeface.BOLD),
+				(int) (32 * ratio));
 		this.mFont.load();
+
+		onLoadResource();
+
+		marginTextMath = marginTextMath * ratio;
 	}
 
 	@Override
 	protected Scene onCreateScene() {
-		Scene scene = new Scene();
-		scene.setBackground(new SpriteBackground(new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
-				getVertexBufferObjectManager())));
+		scene = new Scene();
+		scene.setBackground(new SpriteBackground(
+				new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
+						getVertexBufferObjectManager())));
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
-		mListView = new AutoScrollHorizontalList(this, 10, 50, CAMERA_WIDTH - 20, iconHighScoreMenuRegion.getHeight()
-				* ratio, getVertexBufferObjectManager());
-		MathAdapter adapter = new MathAdapter(iconHighScoreMenuRegion, ratio, getVertexBufferObjectManager());
-		scene.attachChild(mListView);
-		mListView.setAdapter(adapter);
-		mListView.setSelection(Integer.MAX_VALUE / 2);
-		mListView.setScrollVelocity(-3f);
+		mSeekBar = new SeekBar(this, 0, 50 * ratio, progressRegion.getWidth()
+				* ratio, progressRegion.getHeight() * ratio, progressRegion,
+				9f * ratio, org.andengine.util.color.Color.GREEN, starRegion,
+				ratio, getVertexBufferObjectManager());
+		mSeekBar.setX(CAMERA_WIDTH / 2 - mSeekBar.getWidth() / 2);
+		// mSeekBar.setPercent(50);
+		scene.attachChild(mSeekBar);
+		mSeekBar.setSeekBarListenner(this);
 
-		MathExpanableMenu mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this, mCamera, ratio);
+		MathExpanableMenu mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110
+				* ratio, this, mCamera, ratio);
 		mMenu.init();
 		mMenu.setOnMenuItemClickListener(this);
 		scene.setChildScene(mMenu);
 
-		Sprite child = new Sprite(30, mMenu.getMenuPositionY() - childFaceRegion.getHeight() * ratio,
-				childFaceRegion.getWidth() * ratio, childFaceRegion.getHeight() * ratio, childFaceRegion,
+		child = new Sprite(30, mMenu.getMenuPositionY()
+				- childFaceRegion.getHeight() * ratio,
+				childFaceRegion.getWidth() * ratio, childFaceRegion.getHeight()
+						* ratio, childFaceRegion,
 				getVertexBufferObjectManager());
 		scene.attachChild(child);
-		Sprite messageFrame = new Sprite(child.getX() + child.getWidth() + 30 * ratio, mMenu.getMenuPositionY()
-				- messageRegion.getHeight() * ratio, messageRegion.getWidth() * ratio, messageRegion.getHeight()
-				* ratio, messageRegion, getVertexBufferObjectManager());
+		Sprite messageFrame = new Sprite(child.getX() + child.getWidth() + 30
+				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
+				* ratio, messageRegion.getWidth() * ratio,
+				messageRegion.getHeight() * ratio, messageRegion,
+				getVertexBufferObjectManager());
 		scene.attachChild(messageFrame);
-		
-		TickerTextManagable tickTextManagable = new TickerTextManagable(10*ratio, 10*ratio, mFont, "Giup minh giai bai toan nay voi , kho qua , hu hu", new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()-2*10*ratio, HorizontalAlign.CENTER, 15), getVertexBufferObjectManager());
-		tickTextManagable.setTickerTextListenner(new ITickerTextListenner() {
-			
-			@Override
-			public void onTickerTextComplete() {
-				mListView.setRun(true);
-			}
-		});
+
+		TickerTextManagable tickTextManagable = new TickerTextManagable(
+				10 * ratio, 10 * ratio, mFont,
+				"Giup minh giai bai toan nay voi , kho qua , hu hu",
+				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
+						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
+				getVertexBufferObjectManager());
+		tickTextManagable.setTickerTextListenner(this);
 		messageFrame.attachChild(tickTextManagable);
+
+		initMathGraphicFrame();
+
 		return scene;
 	}
+
+	protected abstract void initMathGraphicFrame();
+
+	protected abstract void onLoadResource();
 
 	@Override
 	public boolean onMenuItemClicked(HUD pMenuScene, final IMenuItem pMenuItem) {
@@ -122,8 +187,9 @@ public class BubbleGameActivity extends PortraitAdmobGameActivity implements IOn
 
 			@Override
 			public void run() {
-				Toast.makeText(BubbleGameActivity.this, "onMenuItemClicked " + pMenuItem.getID(), Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(BubbleGameActivity.this,
+						"onMenuItemClicked " + pMenuItem.getID(),
+						Toast.LENGTH_SHORT).show();
 			}
 		});
 
