@@ -6,15 +6,15 @@ import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.util.Util;
 
-public class Game {
+public class RunModeGame {
 	private static final String tag = "game ";
 	Random random;
 
-	public Game() {
+	public RunModeGame() {
 		this(10);
 	}
 
-	public Game(int maxRightAnswer) {
+	public RunModeGame(int maxRightAnswer) {
 		this.maxRightAnswer = maxRightAnswer;
 		random = new Random();
 	}

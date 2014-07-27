@@ -1,9 +1,12 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.util.Random;
+
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -13,6 +16,7 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.util.HorizontalAlign;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -22,7 +26,9 @@ import android.widget.Toast;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
 import com.bestfunforever.andengine.uikit.entity.SeekBar;
+import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.SeekBar.ISeekBarListenner;
+import com.bestfunforever.andengine.uikit.entity.TickerTextExtension.TickerTextOptions;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable.ITickerTextListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
@@ -55,6 +61,10 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 		handler = new Handler();
 	}
 
+	private String[] childFaces = new String[] { "boy.png", "girl.png" };
+	protected TickerTextManagable tickTextManagable;
+	protected Sprite messageFrame;
+
 	@Override
 	protected void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -74,16 +84,18 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 				.createTiledFromAsset(starAtlas, this, "star.png", 0, 0, 1, 1);
 		starAtlas.load();
 
+		Random random = new Random(System.currentTimeMillis());
+
 		BitmapTextureAtlas childAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (195), (int) (192),
+				this.getTextureManager(), (int) (187), (int) (279),
 				TextureOptions.BILINEAR);
 		childFaceRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(childAtlas, this, "child_face.png", 0, 0,
-						1, 1);
+				.createTiledFromAsset(childAtlas, this,
+						childFaces[random.nextInt(2)], 0, 0, 1, 1);
 		childAtlas.load();
 
 		BitmapTextureAtlas messageAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (356), (int) (152),
+				this.getTextureManager(), (int) (431), (int) (167),
 				TextureOptions.BILINEAR);
 		messageRegion = BitmapTextureAtlasTextureRegionFactory
 				.createTiledFromAsset(messageAtlas, this, "message_frame.png",
@@ -141,17 +153,34 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 		scene.attachChild(mSeekBar);
 		mSeekBar.setSeekBarListenner(this);
 
-		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110
-				* ratio, this, mCamera, ratio);
+		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this,
+				mCamera, ratio);
 		mMenu.init();
 		mMenu.setOnMenuItemClickListener(this);
 		scene.setChildScene(mMenu);
 
-		child = new Sprite(30, mMenu.getMenuPositionY()
+		child = new Sprite(0, mMenu.getMenuPositionY()
 				- childFaceRegion.getHeight() * ratio,
 				childFaceRegion.getWidth() * ratio, childFaceRegion.getHeight()
 						* ratio, childFaceRegion,
 				getVertexBufferObjectManager());
+
+		messageFrame = new Sprite(child.getX() + child.getWidth() + 12
+				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
+				* ratio, messageRegion.getWidth() * ratio,
+				messageRegion.getHeight() * ratio, messageRegion,
+				getVertexBufferObjectManager());
+		scene.attachChild(messageFrame);
+
+		tickTextManagable = new TickerTextManagable(
+				10 * ratio, 10 * ratio, mFont,
+				"",100,
+				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
+						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
+				getVertexBufferObjectManager());
+		tickTextManagable.setTickerTextListenner(this);
+		messageFrame.attachChild(tickTextManagable);
+		
 		scene.attachChild(child);
 
 		initMathGraphicFrame();

@@ -40,7 +40,7 @@ public class RunModeActivity extends BubbleGameActivity implements
 	private Text operand1;
 	private Text operand2;
 	private MathAdapter adapter;
-	private Game mGame;
+	private RunModeGame mGame;
 
 	@Override
 	public void onTickerTextComplete() {
@@ -69,7 +69,7 @@ public class RunModeActivity extends BubbleGameActivity implements
 
 	@Override
 	protected void initMathGraphicFrame() {
-		mGame = new Game();
+		mGame = new RunModeGame();
 		mListView = new AutoScrollHorizontalList(this, 10 * ratio,
 				mSeekBar.getY() + mSeekBar.getHeight() + 30 * ratio,
 				CAMERA_WIDTH - 20 * ratio, greenBubbleRegion.getHeight()
@@ -91,24 +91,8 @@ public class RunModeActivity extends BubbleGameActivity implements
 			}
 		});
 
-		Sprite messageFrame = new Sprite(child.getX() + child.getWidth() + 30
-				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
-				* ratio, messageRegion.getWidth() * ratio,
-				messageRegion.getHeight() * ratio, messageRegion,
-				getVertexBufferObjectManager());
-		scene.attachChild(messageFrame);
-
-		TickerTextManagable tickTextManagable = new TickerTextManagable(
-				10 * ratio, 10 * ratio, mFont,
-				"Giup minh giai bai toan nay voi , kho qua , hu hu",
-				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
-						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
-				getVertexBufferObjectManager());
-		tickTextManagable.setTickerTextListenner(this);
-		messageFrame.attachChild(tickTextManagable);
-
 		final float centerY = mListView.getY()
-				+ (child.getY() - mListView.getY()) / 2;
+				+ (messageFrame.getY() - mListView.getY()) / 2;
 		operator1 = new Text(0, 0, customFontBig, "", 3,
 				getVertexBufferObjectManager());
 		operator2 = new Text(0, 0, customFontBig, "", 3,
@@ -136,6 +120,7 @@ public class RunModeActivity extends BubbleGameActivity implements
 		scene.attachChild(operator3);
 		scene.attachChild(operand1);
 		scene.attachChild(operand2);
+		tickTextManagable.setText("Giup minh giai bai toan nay voi , kho qua , hu hu");
 
 	}
 
@@ -238,15 +223,10 @@ public class RunModeActivity extends BubbleGameActivity implements
 		return null;
 	}
 
-	private float animDuration = 0.5f;
+	private float animDuration = 2f;
 
 	protected void generateFunction() {
 		mGame.generate(10);
-		// operator1.clearEntityModifiers();
-		// operator2.clearEntityModifiers();
-		// operator3.clearEntityModifiers();
-		// operand1.clearEntityModifiers();
-		// operand2.clearEntityModifiers();
 
 		operator1.setText(String.valueOf(mGame.getOperatorsVls()[0]));
 		operator2.setText(String.valueOf(mGame.getOperatorsVls()[1]));
