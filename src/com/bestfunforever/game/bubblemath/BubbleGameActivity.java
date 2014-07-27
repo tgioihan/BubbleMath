@@ -4,8 +4,6 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
-import org.andengine.entity.text.AutoWrap;
-import org.andengine.entity.text.TickerText.TickerTextOptions;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
@@ -15,7 +13,6 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
-import org.andengine.util.HorizontalAlign;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -26,7 +23,6 @@ import android.widget.Toast;
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
 import com.bestfunforever.andengine.uikit.entity.SeekBar;
 import com.bestfunforever.andengine.uikit.entity.SeekBar.ISeekBarListenner;
-import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.TickerTextManagable.ITickerTextListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
@@ -51,6 +47,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 	protected SeekBar mSeekBar;
 
 	protected float marginTextMath = 30f;
+	protected MathExpanableMenu mMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +141,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 		scene.attachChild(mSeekBar);
 		mSeekBar.setSeekBarListenner(this);
 
-		MathExpanableMenu mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110
+		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110
 				* ratio, this, mCamera, ratio);
 		mMenu.init();
 		mMenu.setOnMenuItemClickListener(this);
@@ -156,21 +153,6 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 						* ratio, childFaceRegion,
 				getVertexBufferObjectManager());
 		scene.attachChild(child);
-		Sprite messageFrame = new Sprite(child.getX() + child.getWidth() + 30
-				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
-				* ratio, messageRegion.getWidth() * ratio,
-				messageRegion.getHeight() * ratio, messageRegion,
-				getVertexBufferObjectManager());
-		scene.attachChild(messageFrame);
-
-		TickerTextManagable tickTextManagable = new TickerTextManagable(
-				10 * ratio, 10 * ratio, mFont,
-				"Giup minh giai bai toan nay voi , kho qua , hu hu",
-				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
-						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
-				getVertexBufferObjectManager());
-		tickTextManagable.setTickerTextListenner(this);
-		messageFrame.attachChild(tickTextManagable);
 
 		initMathGraphicFrame();
 

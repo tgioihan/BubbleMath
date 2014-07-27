@@ -1,4 +1,4 @@
-package com.bestfunforever.game.bubblemath;
+package com.bestfunforever.game.bubblemath.Entity;
 
 import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.text.Text;

@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.entity.BaseSprite.State;
 import com.bestfunforever.andengine.uikit.listview.SimpleAdapter;
+import com.bestfunforever.game.bubblemath.Entity.Item;
 
 public class MathAdapter extends SimpleAdapter {
 

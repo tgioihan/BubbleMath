@@ -83,7 +83,7 @@ public class Game {
 				setOperand1(operandRs);
 				setOperand2(operands[2]);
 				operatorsVls[0] = random.nextInt(maxInt);
-				operatorsVls[1] = Util.randInt(0, maxInt - operatorsVls[0]);
+				operatorsVls[1] = Util.randInt(0, maxInt - 1 - operatorsVls[0]);
 				operatorsVls[2] = operatorsVls[0] + operatorsVls[1];
 			} else if (oprRsPos == 1) {
 				setOperand1(operandRs);
@@ -155,23 +155,23 @@ public class Game {
 					operatorsVls[0] = Util.randInt(0, operatorRs);
 					operatorsVls[1] = operatorRs - operatorsVls[0];
 				} else {
-					operatorsVls[0] = Util.randInt(operatorRs, maxInt);
+					operatorsVls[0] = Util.randInt(operatorRs, maxInt - 1);
 					operatorsVls[1] = -operatorRs + operatorsVls[0];
 				}
 			}
 		} else if (posRs == 1) {
 			if (operatorRs > maxInt / 2) {
 				setOperand1("+");
-				operatorsVls[0] = Util.randInt(0, maxInt - operatorRs);
+				operatorsVls[0] = Util.randInt(0, maxInt - 1 - operatorRs);
 				operatorsVls[2] = operatorsVls[1] + operatorsVls[0];
 			} else {
 				int tmp = random.nextInt(2);
 				setOperand1(operands[tmp]);
 				if (tmp == 0) {
-					operatorsVls[0] = Util.randInt(0, maxInt - operatorRs);
+					operatorsVls[0] = Util.randInt(0, maxInt - 1 - operatorRs);
 					operatorsVls[2] = operatorsVls[1] + operatorsVls[0];
 				} else {
-					operatorsVls[0] = Util.randInt(operatorRs, maxInt);
+					operatorsVls[0] = Util.randInt(operatorRs, maxInt - 1);
 					operatorsVls[2] = operatorsVls[0] - operatorsVls[1];
 				}
 			}
@@ -179,7 +179,7 @@ public class Game {
 			int tmp = random.nextInt(2);
 			setOperand1(operands[tmp]);
 			if (tmp == 0) {
-				operatorsVls[1] = Util.randInt(0, maxInt - operatorRs);
+				operatorsVls[1] = Util.randInt(0, maxInt - 1 - operatorRs);
 				operatorsVls[2] = operatorsVls[0] + operatorsVls[1];
 			} else {
 				operatorsVls[1] = Util.randInt(0, operatorRs);
@@ -212,9 +212,9 @@ public class Game {
 	public Object getRightValue() {
 		return rightValue;
 	}
-	
-	public void reset(){
-		rightAnswerCount= 0;
+
+	public void reset() {
+		rightAnswerCount = 0;
 	}
 
 	public int getRightAnswerCount() {
@@ -235,10 +235,10 @@ public class Game {
 
 	public void incressRightAnswer() {
 		rightAnswerCount++;
-		
+
 	}
-	
-	public boolean isComplete(){
+
+	public boolean isComplete() {
 		return rightAnswerCount == maxRightAnswer;
 	}
 

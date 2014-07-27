@@ -6,11 +6,14 @@ import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.shape.IAreaShape;
+import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.util.HorizontalAlign;
 import org.andengine.util.modifier.IModifier;
 import org.andengine.util.modifier.ease.EaseBounceIn;
 import org.andengine.util.modifier.ease.EaseBounceOut;
@@ -18,10 +21,13 @@ import org.andengine.util.modifier.ease.EaseBounceOut;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bestfunforever.andengine.uikit.entity.TickerTextExtension.TickerTextOptions;
+import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.BaseSprite.State;
 import com.bestfunforever.andengine.uikit.listview.OnItemClickListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
+import com.bestfunforever.game.bubblemath.Entity.Item;
 
 public class RunModeActivity extends BubbleGameActivity implements
 		IOnMenuItemClickListener {
@@ -84,6 +90,22 @@ public class RunModeActivity extends BubbleGameActivity implements
 				mListView.setRun(false);
 			}
 		});
+
+		Sprite messageFrame = new Sprite(child.getX() + child.getWidth() + 30
+				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
+				* ratio, messageRegion.getWidth() * ratio,
+				messageRegion.getHeight() * ratio, messageRegion,
+				getVertexBufferObjectManager());
+		scene.attachChild(messageFrame);
+
+		TickerTextManagable tickTextManagable = new TickerTextManagable(
+				10 * ratio, 10 * ratio, mFont,
+				"Giup minh giai bai toan nay voi , kho qua , hu hu",
+				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
+						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
+				getVertexBufferObjectManager());
+		tickTextManagable.setTickerTextListenner(this);
+		messageFrame.attachChild(tickTextManagable);
 
 		final float centerY = mListView.getY()
 				+ (child.getY() - mListView.getY()) / 2;
