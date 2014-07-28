@@ -1,11 +1,11 @@
 package com.bestfunforever.game.bubblemath.Entity;
 
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
-public class SpriteWithValue extends Sprite {
-	private int type;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite;
+
+public class SpriteWithValue extends BaseSprite {
 
 	public SpriteWithValue(float pX, float pY, float ratio,
 			ITextureRegion pTiledTextureRegion,
@@ -16,10 +16,28 @@ public class SpriteWithValue extends Sprite {
 	}
 
 	public int getType() {
-		return type;
+		return getId();
 	}
 
 	public void setType(int type) {
-		this.type = type;
+		setId(type);
+	}
+
+	@Override
+	public void onSelectedState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNormalState() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPressState() {
+		// TODO Auto-generated method stub
+		
 	}
 }

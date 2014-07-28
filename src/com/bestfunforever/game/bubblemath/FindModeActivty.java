@@ -13,16 +13,15 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.modifier.IModifier;
-import org.andengine.util.modifier.ease.EaseBackIn;
-import org.andengine.util.modifier.ease.EaseBackOut;
 import org.andengine.util.modifier.ease.EaseBounceIn;
 import org.andengine.util.modifier.ease.EaseBounceOut;
 
 import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.entity.IClick;
-import com.bestfunforever.andengine.uikit.util.Util;
 import com.bestfunforever.game.bubblemath.Entity.Item;
+import com.bestfunforever.game.bubblemath.Util.FindModeGame;
+import com.bestfunforever.game.bubblemath.Util.GameUtil;
 
 public class FindModeActivty extends BubbleGameActivity {
 
@@ -36,7 +35,6 @@ public class FindModeActivty extends BubbleGameActivity {
 	private float num1Destiny;
 	private float num2Destiny;
 	private float num3Destiny;
-	private float animDuration = 1;
 	private Random random = new Random(System.currentTimeMillis());
 
 	@Override
@@ -115,11 +113,11 @@ public class FindModeActivty extends BubbleGameActivity {
 	}
 
 	private void moveInMathFuntion() {
-		num1.registerEntityModifier(new MoveXModifier(animDuration,
+		num1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num1.getX(), num1Destiny, EaseBounceOut.getInstance()));
-		num2.registerEntityModifier(new MoveXModifier(animDuration,
+		num2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num2.getX(), num2Destiny, EaseBounceOut.getInstance()));
-		num3.registerEntityModifier(new MoveXModifier(animDuration,
+		num3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num3.getX(), num3Destiny, new IEntityModifierListener() {
 
 					@Override
@@ -141,11 +139,11 @@ public class FindModeActivty extends BubbleGameActivity {
 	}
 
 	private void moveOutMathFuntion() {
-		num1.registerEntityModifier(new MoveXModifier(animDuration,
+		num1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num1.getX(), -num1.getWidth(), EaseBounceIn.getInstance()));
-		num2.registerEntityModifier(new MoveXModifier(animDuration,
+		num2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num2.getX(), CAMERA_WIDTH, EaseBounceIn.getInstance()));
-		num3.registerEntityModifier(new MoveXModifier(animDuration,
+		num3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				num3.getX(), CAMERA_WIDTH, new IEntityModifierListener() {
 
 					@Override
@@ -167,7 +165,7 @@ public class FindModeActivty extends BubbleGameActivity {
 	}
 
 	private void start() {
-		mGame.generate(10);
+		mGame.generate(Config.getMax(preferences));
 		num1.setText(mGame.getOperator1());
 		num2.setText("?");
 		num3.setText(mGame.getOperator3());
@@ -175,25 +173,18 @@ public class FindModeActivty extends BubbleGameActivity {
 	}
 
 	private void showAnswerList() {
-		int[] rs = new int[4];
-		int rsPOs = 2;
-
-		for (int i = 0; i < 4; i++) {
-			if (i == rsPOs) {
-				rs[rsPOs] = mGame.getOperator2();
-			} else {
-				rs[i] = Util.randInt(1, 10);
-			}
-		}
+		int rsPOs = random.nextInt(4);
+		int[] rs = GameUtil.gennerateRandomArrayExcept(random, 4, mGame.getOperator2(), rsPOs, Config.getMax(preferences));
+		
 		for (int i = 0; i < 4; i++) {
 			Item item = mAnswerSpriteList.get(i);
 			item.setScale(0);
 			item.setText(rs[i]);
 			if (i < 3) {
-				item.registerEntityModifier(new ScaleModifier(animDuration, 0,
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
 						1, EaseBounceOut.getInstance()));
 			} else {
-				item.registerEntityModifier(new ScaleModifier(animDuration, 0,
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
 						1, new IEntityModifierListener() {
 
 							@Override

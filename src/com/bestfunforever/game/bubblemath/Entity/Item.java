@@ -9,7 +9,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.util.HorizontalAlign;
 import org.andengine.util.color.Color;
 
-import com.bestfunforever.andengine.uikit.entity.BaseSprite;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite;
 
 public class Item extends BaseSprite {
 

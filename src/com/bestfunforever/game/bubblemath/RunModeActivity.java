@@ -1,19 +1,19 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.util.Random;
+
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.shape.IAreaShape;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.text.Text;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
-import org.andengine.util.HorizontalAlign;
+import org.andengine.util.color.Color;
 import org.andengine.util.modifier.IModifier;
 import org.andengine.util.modifier.ease.EaseBounceIn;
 import org.andengine.util.modifier.ease.EaseBounceOut;
@@ -21,16 +21,14 @@ import org.andengine.util.modifier.ease.EaseBounceOut;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.bestfunforever.andengine.uikit.entity.TickerTextExtension.TickerTextOptions;
-import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
-import com.bestfunforever.andengine.uikit.entity.BaseSprite.State;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite.State;
 import com.bestfunforever.andengine.uikit.listview.OnItemClickListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.Item;
+import com.bestfunforever.game.bubblemath.Util.RunModeGame;
 
-public class RunModeActivity extends BubbleGameActivity implements
-		IOnMenuItemClickListener {
+public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemClickListener {
 
 	private TiledTextureRegion greenBubbleRegion;
 	private AutoScrollHorizontalList mListView;
@@ -41,11 +39,14 @@ public class RunModeActivity extends BubbleGameActivity implements
 	private Text operand2;
 	private MathAdapter adapter;
 	private RunModeGame mGame;
+	private Random random = new Random(System.currentTimeMillis());
+
+	private Color[] colors = new Color[] { Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN };
 
 	@Override
 	public void onTickerTextComplete() {
 		mListView.setRun(true);
-		generateFunction();
+		start();
 	}
 
 	@Override
@@ -70,12 +71,9 @@ public class RunModeActivity extends BubbleGameActivity implements
 	@Override
 	protected void initMathGraphicFrame() {
 		mGame = new RunModeGame();
-		mListView = new AutoScrollHorizontalList(this, 10 * ratio,
-				mSeekBar.getY() + mSeekBar.getHeight() + 30 * ratio,
-				CAMERA_WIDTH - 20 * ratio, greenBubbleRegion.getHeight()
-						* ratio, getVertexBufferObjectManager());
-		adapter = new MathAdapter(greenBubbleRegion, 10, ratio, customFont,
-				getVertexBufferObjectManager());
+		mListView = new AutoScrollHorizontalList(this, 10 * ratio, mSeekBar.getY() + mSeekBar.getHeight() + 30 * ratio,
+				CAMERA_WIDTH - 20 * ratio, greenBubbleRegion.getHeight() * ratio, getVertexBufferObjectManager());
+		adapter = new MathAdapter(greenBubbleRegion, Config.getMax(preferences), ratio, customFont, getVertexBufferObjectManager());
 		scene.attachChild(mListView);
 		mListView.setAdapter(adapter);
 		mListView.setSelection(Integer.MAX_VALUE / 2);
@@ -91,18 +89,12 @@ public class RunModeActivity extends BubbleGameActivity implements
 			}
 		});
 
-		final float centerY = mListView.getY()
-				+ (messageFrame.getY() - mListView.getY()) / 2;
-		operator1 = new Text(0, 0, customFontBig, "", 3,
-				getVertexBufferObjectManager());
-		operator2 = new Text(0, 0, customFontBig, "", 3,
-				getVertexBufferObjectManager());
-		operator3 = new Text(0, 0, customFontBig, "", 3,
-				getVertexBufferObjectManager());
-		operand1 = new Text(0, 0, customFontBig, "", 3,
-				getVertexBufferObjectManager());
-		operand2 = new Text(0, 0, customFontBig, "", 3,
-				getVertexBufferObjectManager());
+		final float centerY = mListView.getY() + (messageFrame.getY() - mListView.getY()) / 2;
+		operator1 = new Text(0, 0, customFontBig, "", 3, getVertexBufferObjectManager());
+		operator2 = new Text(0, 0, customFontBig, "", 3, getVertexBufferObjectManager());
+		operator3 = new Text(0, 0, customFontBig, "", 3, getVertexBufferObjectManager());
+		operand1 = new Text(0, 0, customFontBig, "", 3, getVertexBufferObjectManager());
+		operand2 = new Text(0, 0, customFontBig, "", 3, getVertexBufferObjectManager());
 		operator1.setX(-operator1.getWidth());
 		operator2.setX(-operator2.getWidth());
 		operator3.setX(CAMERA_WIDTH);
@@ -126,12 +118,10 @@ public class RunModeActivity extends BubbleGameActivity implements
 
 	@Override
 	protected void onLoadResource() {
-		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (140), (int) (140),
-				TextureOptions.BILINEAR);
-		greenBubbleRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(highscoreMenuAtlas, this,
-						"circle_green.png", 0, 0, 1, 1);
+		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (140),
+				(int) (140), TextureOptions.BILINEAR);
+		greenBubbleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(highscoreMenuAtlas, this,
+				"circle_green.png", 0, 0, 1, 1);
 		highscoreMenuAtlas.load();
 	}
 
@@ -140,38 +130,28 @@ public class RunModeActivity extends BubbleGameActivity implements
 		if (mGame.checkValue(value)) {
 			mGame.incressRightAnswer();
 			if (mQuestionText != null) {
-				mQuestionText.registerEntityModifier(new ScaleModifier(
-						animDuration, 1, 0, new IEntityModifierListener() {
+				mQuestionText.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0,
+						new IEntityModifierListener() {
 
 							@Override
-							public void onModifierStarted(
-									IModifier<IEntity> pModifier, IEntity pItem) {
+							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
 							}
 
 							@Override
-							public void onModifierFinished(
-									IModifier<IEntity> pModifier, IEntity pItem) {
-								((Text) pItem).setText(String.valueOf(mGame
-										.getRightValue()));
-								pItem.registerEntityModifier(new ScaleModifier(
-										animDuration, 0, 1,
+							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+								((Text) pItem).setText(String.valueOf(mGame.getRightValue()));
+								pItem.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1,
 										new IEntityModifierListener() {
 
 											@Override
-											public void onModifierStarted(
-													IModifier<IEntity> pModifier,
-													IEntity pItem) {
+											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
 											}
 
 											@Override
-											public void onModifierFinished(
-													IModifier<IEntity> pModifier,
-													IEntity pItem) {
-												mSeekBar.setPercent(mGame
-														.getProcessPercent(),
-														true);
+											public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+												mSeekBar.setPercent(mGame.getProcessPercent(), true);
 											}
 										}, EaseBounceOut.getInstance()));
 							}
@@ -223,10 +203,8 @@ public class RunModeActivity extends BubbleGameActivity implements
 		return null;
 	}
 
-	private float animDuration = 2f;
-
-	protected void generateFunction() {
-		mGame.generate(10);
+	protected void start() {
+		mGame.generate(Config.getMax(preferences));
 
 		operator1.setText(String.valueOf(mGame.getOperatorsVls()[0]));
 		operator2.setText(String.valueOf(mGame.getOperatorsVls()[1]));
@@ -234,6 +212,13 @@ public class RunModeActivity extends BubbleGameActivity implements
 
 		operand1.setText(String.valueOf(mGame.getOperand1()));
 		operand2.setText(String.valueOf(mGame.getOperand2()));
+
+		// set random COlor
+		operator1.setColor(colors[random.nextInt(colors.length)]);
+		operator2.setColor(colors[random.nextInt(colors.length)]);
+		operator3.setColor(colors[random.nextInt(colors.length)]);
+		operand1.setColor(colors[random.nextInt(colors.length)]);
+		operand2.setColor(colors[random.nextInt(colors.length)]);
 
 		adapter.setType(mGame.getRsType());
 
@@ -280,67 +265,51 @@ public class RunModeActivity extends BubbleGameActivity implements
 		totalWidth += operator3.getWidth();
 		float distance = CAMERA_WIDTH / 2 - totalWidth / 2;
 		float operator11Destiny = distance;
-		float operand1Destiny = operator11Destiny + operator1.getWidth()
-				+ marginTextMath;
-		float operator2Destiny = operand1Destiny + operand1.getWidth()
-				+ marginTextMath;
-		float operand2Destiny = operator2Destiny + operator2.getWidth()
-				+ marginTextMath;
-		float operator3Destiny = operand2Destiny + operand2.getWidth()
-				+ marginTextMath;
-		operator1.registerEntityModifier(new MoveXModifier(animDuration,
-				operator1.getX(), operator11Destiny, EaseBounceOut
-						.getInstance()));
-		operator2
-				.registerEntityModifier(new MoveXModifier(animDuration,
-						operator2.getX(), operator2Destiny, EaseBounceOut
-								.getInstance()));
-		operator3
-				.registerEntityModifier(new MoveXModifier(animDuration,
-						operator3.getX(), operator3Destiny, EaseBounceOut
-								.getInstance()));
+		float operand1Destiny = operator11Destiny + operator1.getWidth() + marginTextMath;
+		float operator2Destiny = operand1Destiny + operand1.getWidth() + marginTextMath;
+		float operand2Destiny = operator2Destiny + operator2.getWidth() + marginTextMath;
+		float operator3Destiny = operand2Destiny + operand2.getWidth() + marginTextMath;
+		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(), operator11Destiny,
+				EaseBounceOut.getInstance()));
+		operator2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator2.getX(), operator2Destiny,
+				EaseBounceOut.getInstance()));
+		operator3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator3.getX(), operator3Destiny,
+				EaseBounceOut.getInstance()));
 
 		operand1.setScale(0);
 		operand2.setScale(0);
 		operand1.setX(operand1Destiny);
 		operand2.setX(operand2Destiny);
-		operand1.registerEntityModifier(new ScaleModifier(animDuration, 0, 1,
-				EaseBounceOut.getInstance()));
-		operand2.registerEntityModifier(new ScaleModifier(animDuration, 0, 1,
-				EaseBounceOut.getInstance()));
+		operand1.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut.getInstance()));
+		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut.getInstance()));
 
 	}
 
 	private void moveOutMathFuntion() {
-		operator1.registerEntityModifier(new MoveXModifier(animDuration,
-				operator1.getX(), -operator1.getWidth(), EaseBounceIn
-						.getInstance()));
-		operator2.registerEntityModifier(new MoveXModifier(animDuration,
-				operator2.getX(), CAMERA_WIDTH, EaseBounceIn.getInstance()));
-		operator3.registerEntityModifier(new MoveXModifier(animDuration,
-				operator3.getX(), CAMERA_WIDTH, EaseBounceIn.getInstance()));
-
-		operand1.registerEntityModifier(new ScaleModifier(animDuration, 1, 0,
+		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(), -operator1.getWidth(),
 				EaseBounceIn.getInstance()));
-		operand2.registerEntityModifier(new ScaleModifier(animDuration, 1, 0,
-				new IEntityModifierListener() {
+		operator2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator2.getX(), CAMERA_WIDTH, EaseBounceIn
+				.getInstance()));
+		operator3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator3.getX(), CAMERA_WIDTH, EaseBounceIn
+				.getInstance()));
 
-					@Override
-					public void onModifierStarted(IModifier<IEntity> pModifier,
-							IEntity pItem) {
+		operand1.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0, EaseBounceIn.getInstance()));
+		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0, new IEntityModifierListener() {
 
-					}
+			@Override
+			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
-					@Override
-					public void onModifierFinished(
-							IModifier<IEntity> pModifier, IEntity pItem) {
-						for (IAreaShape item : mListView.getChildrents()) {
-							((Item) item).onNormalState();
-						}
-						mListView.setRun(true);
-						generateFunction();
-					}
-				}, EaseBounceIn.getInstance()));
+			}
+
+			@Override
+			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+				for (IAreaShape item : mListView.getChildrents()) {
+					((Item) item).onNormalState();
+				}
+				mListView.setRun(true);
+				start();
+			}
+		}, EaseBounceIn.getInstance()));
 	}
 
 	@Override
@@ -349,9 +318,8 @@ public class RunModeActivity extends BubbleGameActivity implements
 
 			@Override
 			public void run() {
-				Toast.makeText(RunModeActivity.this,
-						"onMenuItemClicked " + pMenuItem.getID(),
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(RunModeActivity.this, "onMenuItemClicked " + pMenuItem.getID(), Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 

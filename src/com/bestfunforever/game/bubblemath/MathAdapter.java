@@ -4,13 +4,12 @@ import java.util.Random;
 
 import org.andengine.entity.shape.IAreaShape;
 import org.andengine.opengl.font.Font;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import android.util.Log;
 
-import com.bestfunforever.andengine.uikit.entity.BaseSprite.State;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite.State;
 import com.bestfunforever.andengine.uikit.listview.SimpleAdapter;
 import com.bestfunforever.game.bubblemath.Entity.Item;
 

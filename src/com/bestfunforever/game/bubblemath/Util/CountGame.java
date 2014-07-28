@@ -1,4 +1,4 @@
-package com.bestfunforever.game.bubblemath;
+package com.bestfunforever.game.bubblemath.Util;
 
 import java.util.Random;
 

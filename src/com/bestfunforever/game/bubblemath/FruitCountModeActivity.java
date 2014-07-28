@@ -8,13 +8,10 @@ import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveXModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.shape.IAreaShape;
-import org.andengine.entity.sprite.Sprite;
-import org.andengine.entity.text.AutoWrap;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
-import org.andengine.util.HorizontalAlign;
 import org.andengine.util.adt.pool.MultiPool;
 import org.andengine.util.modifier.IModifier;
 import org.andengine.util.modifier.ease.EaseBackIn;
@@ -25,18 +22,15 @@ import org.andengine.util.modifier.ease.EaseBounceOut;
 import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.entity.IClick;
-import com.bestfunforever.andengine.uikit.entity.TickerTextExtension.TickerTextOptions;
-import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
-import com.bestfunforever.andengine.uikit.util.Util;
 import com.bestfunforever.game.bubblemath.Entity.GameObjectGenerate;
-import com.bestfunforever.game.bubblemath.Entity.GameUtil;
 import com.bestfunforever.game.bubblemath.Entity.Item;
 import com.bestfunforever.game.bubblemath.Entity.SpriteWithValue;
+import com.bestfunforever.game.bubblemath.Util.CountGame;
+import com.bestfunforever.game.bubblemath.Util.GameUtil;
 
-public class FruitCountMode extends BubbleGameActivity {
-	private static final String tag = "FruitCountMode";
+public class FruitCountModeActivity extends BubbleGameActivity {
+	private static final String tag = "FruitCountModeActivity";
 	private TiledTextureRegion greenBubbleRegion;
-	private float animDuration = 2f;
 	private CountGame mGame;
 	private ArrayList<Item> mAnswerSpriteList;
 	private MultiPool<SpriteWithValue> mPool;
@@ -108,7 +102,7 @@ public class FruitCountMode extends BubbleGameActivity {
 	private ArrayList<Integer> rights = new ArrayList<Integer>();
 
 	private void start() {
-		mGame.generate(10);
+		mGame.generate(Config.getMax(preferences));
 		int totalItem = mGame.getTotalItem();
 		int itemType = mGame.getItemRsPos();
 		int result = mGame.getResult();
@@ -220,7 +214,7 @@ public class FruitCountMode extends BubbleGameActivity {
 				mGraphicObjects.get(i).setY(
 						mGraphicObjects.get(i).getY() + disY);
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(animDuration, mGraphicObjects.get(i)
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
 								.getX(), destinys[i], EaseBounceOut
 								.getInstance()));
 				Log.d(tag, tag + " start animation " + i + " destinys[i] "
@@ -232,7 +226,7 @@ public class FruitCountMode extends BubbleGameActivity {
 						mGraphicObjects.get(i + row1).getY() + disY);
 				if (i == row2 - 1) {
 					mGraphicObjects.get(i + row1).registerEntityModifier(
-							new MoveXModifier(animDuration, mGraphicObjects
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
 									.get(i + row1).getX(), destinys[i + row1],
 									new IEntityModifierListener() {
 
@@ -257,7 +251,7 @@ public class FruitCountMode extends BubbleGameActivity {
 									}, EaseBackOut.getInstance()));
 				} else {
 					mGraphicObjects.get(i + row1).registerEntityModifier(
-							new MoveXModifier(animDuration, mGraphicObjects
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
 									.get(i + row1).getX(), destinys[i + row1],
 									EaseBackOut.getInstance()));
 				}
@@ -299,7 +293,7 @@ public class FruitCountMode extends BubbleGameActivity {
 						mGraphicObjects.get(i).getY() + disY);
 				if (i == totalItem - 1) {
 					mGraphicObjects.get(i).registerEntityModifier(
-							new MoveXModifier(animDuration, mGraphicObjects
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
 									.get(i).getX(), destinys[i],
 									new IEntityModifierListener() {
 
@@ -324,7 +318,7 @@ public class FruitCountMode extends BubbleGameActivity {
 									}, EaseBackOut.getInstance()));
 				} else {
 					mGraphicObjects.get(i).registerEntityModifier(
-							new MoveXModifier(animDuration, mGraphicObjects
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
 									.get(i).getX(), destinys[i], EaseBackOut
 									.getInstance()));
 				}
@@ -343,7 +337,7 @@ public class FruitCountMode extends BubbleGameActivity {
 		for (Integer i : lefts) {
 			if (count == lefts.size() - 1) {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(animDuration, mGraphicObjects.get(i)
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
 								.getX(), -mGraphicObjects.get(i).getWidth(),
 								new IEntityModifierListener() {
 
@@ -373,7 +367,7 @@ public class FruitCountMode extends BubbleGameActivity {
 								}, EaseBackIn.getInstance()));
 			} else {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(animDuration, mGraphicObjects.get(i)
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
 								.getX(), -mGraphicObjects.get(i).getWidth(),
 								EaseBackIn.getInstance()));
 			}
@@ -384,7 +378,7 @@ public class FruitCountMode extends BubbleGameActivity {
 		for (Integer i : rights) {
 			if (count == rights.size() - 1 && !leftListenner) {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(animDuration, mGraphicObjects.get(i)
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
 								.getX(), CAMERA_WIDTH,
 								new IEntityModifierListener() {
 
@@ -415,7 +409,7 @@ public class FruitCountMode extends BubbleGameActivity {
 			} else {
 				mGraphicObjects.get(i)
 						.registerEntityModifier(
-								new MoveXModifier(animDuration, mGraphicObjects
+								new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
 										.get(i).getX(), CAMERA_WIDTH,
 										EaseBackIn.getInstance()));
 			}
@@ -478,31 +472,23 @@ public class FruitCountMode extends BubbleGameActivity {
 	private void animateAnswerObjectOut() {
 		for (int i = 0; i < 4; i++) {
 			Item item = mAnswerSpriteList.get(i);
-			item.registerEntityModifier(new ScaleModifier(animDuration, 1, 0,
+			item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0,
 					EaseBounceIn.getInstance()));
 		}
 	}
 
 	private void animateAnswerObjectIn() {
-		int[] rs = new int[4];
 		int rsPOs = random.nextInt(4);
-
-		for (int i = 0; i < 4; i++) {
-			if (i == rsPOs) {
-				rs[rsPOs] = mGame.getResult();
-			} else {
-				rs[i] = Util.randInt(1, 10);
-			}
-		}
+		int[] rs = GameUtil.gennerateRandomArrayExcept(random, 4, mGame.getResult(), rsPOs, Config.getMax(preferences));
 		for (int i = 0; i < 4; i++) {
 			Item item = mAnswerSpriteList.get(i);
 			item.setScale(0);
 			item.setText(rs[i]);
 			if (i < 3) {
-				item.registerEntityModifier(new ScaleModifier(animDuration, 0,
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
 						1, EaseBounceOut.getInstance()));
 			} else {
-				item.registerEntityModifier(new ScaleModifier(animDuration, 0,
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
 						1, new IEntityModifierListener() {
 
 							@Override

@@ -18,6 +18,7 @@ import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.HorizontalAlign;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -25,13 +26,14 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
-import com.bestfunforever.andengine.uikit.entity.SeekBar;
-import com.bestfunforever.andengine.uikit.entity.TickerTextManagable;
-import com.bestfunforever.andengine.uikit.entity.SeekBar.ISeekBarListenner;
-import com.bestfunforever.andengine.uikit.entity.TickerTextExtension.TickerTextOptions;
-import com.bestfunforever.andengine.uikit.entity.TickerTextManagable.ITickerTextListenner;
+import com.bestfunforever.andengine.uikit.entity.Sprite.SeekBar;
+import com.bestfunforever.andengine.uikit.entity.Sprite.SeekBar.ISeekBarListenner;
+import com.bestfunforever.andengine.uikit.entity.text.TickerTextExtension.TickerTextOptions;
+import com.bestfunforever.andengine.uikit.entity.text.TickerTextManagable;
+import com.bestfunforever.andengine.uikit.entity.text.TickerTextManagable.ITickerTextListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
+import com.bestfunforever.game.bubblemath.Entity.MainMenu.MathExpanableMenu;
 
 public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 		implements IOnMenuItemClickListener, ITickerTextListenner,
@@ -54,10 +56,12 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 
 	protected float marginTextMath = 30f;
 	protected MathExpanableMenu mMenu;
+	protected SharedPreferences preferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		preferences = getSharedPreferences(Config.KEY_PREF, 0);
 		handler = new Handler();
 	}
 
@@ -112,16 +116,16 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 				512, 512, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
 		customFont = FontFactory.createStrokeFromAsset(getFontManager(),
-				customFontTexture, getAssets(), "UVNBanhMi.TTF", (float) 80
-						* ratio, true, Color.WHITE, 2, Color.RED);
+				customFontTexture, getAssets(), "MTCORSVA.ttf", (float) 80
+						* ratio, true, Color.WHITE, 3, Color.GREEN);
 		customFont.load();
 
 		customFontBigTexture = new BitmapTextureAtlas(this.getTextureManager(),
 				1024, 1024, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
 		customFontBig = FontFactory.createStrokeFromAsset(getFontManager(),
-				customFontBigTexture, getAssets(), "UVNBanhMi.TTF", (float) 145
-						* ratio, true, Color.WHITE, 2, Color.RED);
+				customFontBigTexture, getAssets(), "MTCORSVA.ttf", (float) 200
+						* ratio, true, Color.WHITE, 3, Color.RED);
 		customFontBig.load();
 
 		this.mFont = FontFactory.create(this.getFontManager(),

@@ -1,4 +1,4 @@
-package com.bestfunforever.game.bubblemath;
+package com.bestfunforever.game.bubblemath.Entity.MainMenu;
 
 import java.util.ArrayList;
 
@@ -12,11 +12,10 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.color.Color;
 
-import com.bestfunforever.andengine.uikit.entity.BubbleSprite;
 import com.bestfunforever.andengine.uikit.entity.IClick;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BubbleSprite;
 import com.bestfunforever.andengine.uikit.menu.ExpandableMenu;
 import com.bestfunforever.andengine.uikit.menu.MenuItem;
-import com.bestfunforever.andengine.uikit.menu.BaseMenu.STAGE;
 
 public class MathExpanableMenu extends ExpandableMenu {
 	private TiledTextureRegion iconHighScoreMenuRegion;

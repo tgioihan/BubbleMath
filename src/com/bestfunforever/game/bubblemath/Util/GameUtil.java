@@ -1,10 +1,9 @@
-package com.bestfunforever.game.bubblemath.Entity;
+package com.bestfunforever.game.bubblemath.Util;
 
 import java.util.Random;
 
 public class GameUtil {
-	public static int[] gennerateRandomArray(Random random, int count,
-			int totlaItemCOunt) {
+	public static int[] gennerateRandomArray(Random random, int count, int totlaItemCOunt) {
 		int[] rsPositions = new int[count];
 		int i = 0;
 		int vl = -1;
@@ -30,29 +29,34 @@ public class GameUtil {
 		return rsPositions;
 	}
 
-	public static int[] gennerateRandomArrayExcept(Random random, int count,
-			int excep, int totlaItemCOunt) {
+	public static int[] gennerateRandomArrayExcept(Random random, int count, int excep, int excepPos, int totlaItemCOunt) {
 		int[] rsPositions = new int[count];
 		int i = 0;
 		int vl = -1;
 		boolean accespt = false;
 		while (i < count) {
-			vl = random.nextInt(totlaItemCOunt);
-			accespt = true;
-			if (i == 0) {
-				if (vl == excep) {
-					accespt = false;
-				}
+			if (i == excepPos) {
+				rsPositions[i] = excep;
+				i++;
 			} else {
-				for (int j = 0; j < i; j++) {
-					if (vl == rsPositions[j] || vl == excep) {
+				vl = random.nextInt(totlaItemCOunt);
+				accespt = true;
+
+				if (i == 0) {
+					if (vl == excep) {
 						accespt = false;
 					}
+				} else {
+					for (int j = 0; j < i; j++) {
+						if (vl == rsPositions[j] || vl == excep) {
+							accespt = false;
+						}
+					}
 				}
-			}
-			if (accespt) {
-				rsPositions[i] = vl;
-				i++;
+				if (accespt) {
+					rsPositions[i] = vl;
+					i++;
+				}
 			}
 		}
 		return rsPositions;
