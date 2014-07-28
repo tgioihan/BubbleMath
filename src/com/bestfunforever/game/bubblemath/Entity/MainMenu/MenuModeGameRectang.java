@@ -24,21 +24,22 @@ public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectan
 	private TextExtension mFruitMode;
 	private TextExtension mFindMode;
 	private TextExtension mRunMode;
+	private float margin = 10;
 
 	public MenuModeGameRectang(float pX, float pY, float pWidth, float pHeight, float ratio, Font font,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 		setColor(Color.TRANSPARENT);
 
-		mFruitMode = new TextExtension(0, 0, font, "Fuit Mode", 10, new TextOptions(AutoWrap.WORDS, pWidth,
+		mFruitMode = new TextExtension(0, 0, font, "Fuit Mode", 10, new TextOptions(AutoWrap.LETTERS, pWidth,
 				HorizontalAlign.CENTER), pVertexBufferObjectManager);
-		mFindMode = new TextExtension(0, mFruitMode.getY()+mFruitMode.getHeight() + 40 * ratio, font, "Find Mode", 10, new TextOptions(
-				AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
-		mRunMode = new TextExtension(0,mFindMode.getY()+ mFindMode.getHeight() + 40 * ratio, font, "Run Mode", 10, new TextOptions(
-				AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mFindMode = new TextExtension(0, mFruitMode.getY()+mFruitMode.getHeight() + margin * ratio, font, "1..3", 10, new TextOptions(
+				AutoWrap.LETTERS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mRunMode = new TextExtension(0,mFindMode.getY()+ mFindMode.getHeight() + margin * ratio, font, "Run Mode", 10, new TextOptions(
+				AutoWrap.LETTERS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
 
-		float height = mRunMode.getY() + mRunMode.getHeight();
-		float disY = pHeight / 2 - height / 2;
+//		float height = mRunMode.getY() + mRunMode.getHeight();
+		float disY = 0;
 		mFruitMode.setY(mFruitMode.getY() + disY);
 		mFindMode.setY(mFindMode.getY() + disY);
 		mRunMode.setY(mRunMode.getY() + disY);
