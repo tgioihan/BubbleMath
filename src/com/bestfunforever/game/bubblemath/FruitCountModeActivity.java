@@ -56,11 +56,13 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 	@Override
 	public void onTickerTextComplete() {
+		super.onTickerTextComplete();
 		Log.d(tag,
 				tag + " onTickerTextComplete " + tickTextManagable.getText()
 						+ (!tickTextManagable.getText().equals("")));
-		if (!tickTextManagable.getText().equals(""))
-			animateAnswerObjectIn();
+		if (!endgame)
+			if (!tickTextManagable.getText().equals(""))
+				animateAnswerObjectIn();
 	}
 
 	@Override
@@ -77,6 +79,8 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	public void onFinishSeek(float percent, boolean userTouch) {
 		if (mGame.isComplete()) {
 			Log.d("", "game finish ");
+			endgame = true;
+			showEndGame();
 		} else {
 			animateGameObjectOut();
 		}
@@ -243,8 +247,11 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 								@Override
 								public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-									String msg = String.format(stringManger.getStringFromKey(StringManger.FRUIT_MSG), mGame.getFruitName()[mGame.getItemRsPos()]);
+									String msg = String.format(stringManger.getStringFromKey(StringManger.FRUIT_MSG),
+											mGame.getFruitName()[mGame.getItemRsPos()]);
 									tickTextManagable.setText(msg);
+									tickTextManagable.setY(messageFrame.getHeight() / 2 - tickTextManagable.getHeight()
+											/ 2);
 
 								}
 							}, EaseBackOut.getInstance()));
@@ -296,8 +303,12 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 										@Override
 										public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-											String msg = String.format(stringManger.getStringFromKey(StringManger.FRUIT_MSG),  mGame.getFruitName()[mGame.getItemRsPos()]);
+											String msg = String.format(
+													stringManger.getStringFromKey(StringManger.FRUIT_MSG),
+													mGame.getFruitName()[mGame.getItemRsPos()]);
 											tickTextManagable.setText(msg);
+											tickTextManagable.setY(messageFrame.getHeight() / 2
+													- tickTextManagable.getHeight() / 2);
 
 										}
 									}, EaseBackOut.getInstance()));
@@ -431,8 +442,9 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 							Log.d(tag, tag + " right value " + value);
 							mGame.incressRightAnswer();
 							mSeekBar.setPercent(mGame.getProcessPercent(), true);
-						}else{
-							item.onNormalState();;
+						} else {
+							item.onNormalState();
+							;
 							lockUserAction(true);
 						}
 					}
@@ -493,6 +505,33 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 			for (Item item : mAnswerSpriteList) {
 				item.setEnabled(enable);
 			}
+		}
+	}
+
+	@Override
+	protected void onCloseEndGame() {
+		for (Item item : mAnswerSpriteList) {
+			item.setEnabled(true);
+			item.setVisible(true);
+		}
+		for (SpriteWithValue item : mGraphicObjects) {
+			item.setEnabled(true);
+			item.setVisible(true);
+		}
+		if (!endgame) {
+			start();
+		}
+	}
+
+	@Override
+	protected void onEndGame() {
+		for (Item item : mAnswerSpriteList) {
+			item.setEnabled(false);
+			item.setVisible(false);
+		}
+		for (SpriteWithValue item : mGraphicObjects) {
+			item.setEnabled(false);
+			item.setVisible(false);
 		}
 	}
 }

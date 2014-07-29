@@ -8,10 +8,6 @@ import org.andengine.entity.scene.Scene;
 import org.andengine.entity.text.AutoWrap;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.opengl.font.Font;
-import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.HorizontalAlign;
@@ -20,34 +16,30 @@ import org.andengine.util.modifier.ease.EaseBackIn;
 import org.andengine.util.modifier.ease.EaseBounceOut;
 
 import com.bestfunforever.andengine.uikit.entity.IClick;
-import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite;
 import com.bestfunforever.andengine.uikit.entity.Sprite.ClipingRectangle;
-import com.bestfunforever.andengine.uikit.entity.Sprite.SpriteImplement;
 import com.bestfunforever.andengine.uikit.entity.text.TextExtension;
 import com.bestfunforever.game.bubblemath.Config;
 import com.bestfunforever.game.bubblemath.StringManger;
 
 public class MenuRectang extends ClipingRectangle implements IMenuRectangle {
-	private BaseSprite mStart;
-	private BaseSprite mSetting;
-	private BaseSprite mMore;
-	private float margin = 10;
-	private TextureRegion mStartRegion;
-	private TextureRegion mMoreRegion;
-	private TextureRegion mSettingRegion;
+	private TextExtension mStart;
+	private TextExtension mSetting;
+	private TextExtension mMore;
+	private float margin = 00;
 
 	public MenuRectang(SimpleBaseGameActivity context,StringManger stringManger, float pX, float pY, float pWidth, float pHeight, float ratio,
 			Font font, VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 		setColor(Color.TRANSPARENT);
 		
-		onLoadResource(context);
+		mStart = new TextExtension(0, 0, font, stringManger.getStringFromKey(StringManger.START), 10, new TextOptions(AutoWrap.WORDS, pWidth,
+				HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mSetting = new TextExtension(0, mStart.getHeight() + margin * ratio, font, stringManger.getStringFromKey(StringManger.SETTING), 10, new TextOptions(
+				AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mMore = new TextExtension(0, mSetting.getY() + mSetting.getHeight() + margin * ratio, font, stringManger.getStringFromKey(StringManger.MORE), 10, new TextOptions(AutoWrap.WORDS, pWidth,
+				HorizontalAlign.CENTER), pVertexBufferObjectManager);
 
-		mStart = new SpriteImplement(0, 0, mStartRegion.getWidth()*ratio,mStartRegion.getHeight()*ratio,mStartRegion, pVertexBufferObjectManager);
-		mSetting = new SpriteImplement(0, mStart.getY() + mStart.getHeight() + margin * ratio, mSettingRegion.getWidth()*ratio,mSettingRegion.getHeight()*ratio,mSettingRegion, pVertexBufferObjectManager);
-		mMore = new SpriteImplement(0, mSetting.getY() + mSetting.getHeight() + margin * ratio, mMoreRegion.getWidth()*ratio,mMoreRegion.getHeight()*ratio,mMoreRegion, pVertexBufferObjectManager);
-
-		float height = mSetting.getY() + mSetting.getHeight() + mMore.getHeight();
+		float height = mSetting.getY() + mSetting.getHeight() +mMore.getHeight() ;
 		float disY = pHeight / 2 - height / 2;
 		mStart.setY(mStart.getY() + disY);
 		mSetting.setY(mSetting.getY() + disY);
@@ -61,20 +53,6 @@ public class MenuRectang extends ClipingRectangle implements IMenuRectangle {
 		attachChild(mStart);
 		attachChild(mSetting);
 		attachChild(mMore);
-	}
-
-	private void onLoadResource(SimpleBaseGameActivity context) {
-		BitmapTextureAtlas startAtlas = new BitmapTextureAtlas(context.getTextureManager(), 165, 61, TextureOptions.BILINEAR);
-		this.mStartRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(startAtlas, context, "start.png", 0, 0); // 64x32
-		startAtlas.load();	
-		
-		BitmapTextureAtlas settingAtlas = new BitmapTextureAtlas(context.getTextureManager(), 252, 79, TextureOptions.BILINEAR);
-		this.mSettingRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(settingAtlas, context, "settings.png", 0, 0); // 64x32
-		settingAtlas.load();
-		
-		BitmapTextureAtlas moreAtlas = new BitmapTextureAtlas(context.getTextureManager(), 164, 61, TextureOptions.BILINEAR);
-		this.mMoreRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(moreAtlas, context, "more.png", 0, 0); // 64x32
-		moreAtlas.load();
 	}
 
 	public void attachToScene(Scene scene) {

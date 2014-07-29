@@ -18,7 +18,7 @@ import com.bestfunforever.andengine.uikit.menu.ExpandableMenu;
 import com.bestfunforever.andengine.uikit.menu.MenuItem;
 
 public class MathExpanableMenu extends ExpandableMenu {
-	private TiledTextureRegion iconHighScoreMenuRegion;
+	private TiledTextureRegion menuRegion;
 	private float pX;
 	private float pY;
 
@@ -44,10 +44,10 @@ public class MathExpanableMenu extends ExpandableMenu {
 	public void onLoadResource() {
 		// TODO Auto-generated method stub
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(context.getTextureManager(), (int) (140),
-				(int) (140), TextureOptions.BILINEAR);
-		iconHighScoreMenuRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(highscoreMenuAtlas,
-				context, "high_score.png", 0, 0, 1, 1);
+		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(context.getTextureManager(), (int) (84),
+				(int) (84), TextureOptions.BILINEAR);
+		menuRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(highscoreMenuAtlas,
+				context, "menu.png", 0, 0, 1, 1);
 		highscoreMenuAtlas.load();
 	}
 
@@ -57,8 +57,8 @@ public class MathExpanableMenu extends ExpandableMenu {
 		mItemLayer.setColor(Color.TRANSPARENT);
 		attachChild(mItemLayer);
 
-		mControl = new BubbleSprite(pX, pY, iconHighScoreMenuRegion.getWidth() * ratio,
-				iconHighScoreMenuRegion.getHeight() * ratio, iconHighScoreMenuRegion,
+		mControl = new BubbleSprite(pX, pY, menuRegion.getWidth() * ratio,
+				menuRegion.getHeight() * ratio, menuRegion,
 				context.getVertexBufferObjectManager());
 		mControl.setClickListenner(new IClick() {
 
@@ -76,8 +76,8 @@ public class MathExpanableMenu extends ExpandableMenu {
 		registerTouchArea(mControl);
 		ArrayList<MenuItem> list = new ArrayList<MenuItem>();
 		for (int i = 0; i < 3; i++) {
-			MenuItem menuItem1 = new MenuItem(i, iconHighScoreMenuRegion.getWidth() * ratio,
-					iconHighScoreMenuRegion.getHeight() * ratio, null, null, iconHighScoreMenuRegion,
+			MenuItem menuItem1 = new MenuItem(i, menuRegion.getWidth() * ratio,
+					menuRegion.getHeight() * ratio, null, null, menuRegion,
 					context.getVertexBufferObjectManager());
 			list.add(menuItem1);
 		}

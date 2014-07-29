@@ -61,7 +61,7 @@ public class Config {
 	}
 
 	public static int getLanguage(SharedPreferences preferences) {
-		return KEY_LANGUAGE_VNI;
+		return preferences.getInt(KEY_LANGUAGE, KEY_LANGUAGE_NOTSET);
 	}
 
 	public static void setLanguage(SharedPreferences preferences, int languageId) {

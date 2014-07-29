@@ -36,13 +36,12 @@ import com.bestfunforever.game.bubblemath.Entity.MainMenu.MenuSettingGameRectang
 public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private BitmapTextureAtlas customFontTexture;
-	private StrokeFont customFont;
+	private Font customFont;
 	private TextureRegion mBgTextureRegion;
 	private MenuRectang menu;
 	private Scene mScene;
 	private MenuModeGameRectang modeGame;
 	private IMenuRectangle mCurrentMenuRectangle;
-	private Font mFont;
 	private BitmapTextureAtlas mSoundBitmapTextureAtlas;
 	private TiledTextureRegion mSoundTextureRegion;
 	private BitmapTextureAtlas mMusicBitmapTextureAtlas;
@@ -68,19 +67,8 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		FontFactory.setAssetBasePath("font/");
 		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		// customFont = FontFactory.createStrokeFromAsset(getFontManager(),
-		// customFontTexture, getAssets(), "MTCORSVA.ttf", (float) 100
-		// * ratio, true, new org.andengine.util.color.Color(
-		// 7f / 255, 132f / 255, 91f / 255).hashCode(), 2 * ratio,
-		// Color.WHITE);
-		customFont = new StrokeFont(getFontManager(), customFontTexture, Typeface.create(
-				Typeface.DEFAULT_BOLD, Typeface.BOLD_ITALIC), (float) 60 * ratio, true,
-				Color.RED, 1 * ratio, Color.WHITE, false);
+		customFont = FontFactory.createFromAsset(getFontManager(), customFontTexture, getAssets(), "UVF_AguafinaScript.ttf", (float) 100 * ratio, true, Color.RED);
 		customFont.load();
-
-		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), (int) (256 * ratio),
-				(int) (256 * ratio), Typeface.create(Typeface.DEFAULT, Typeface.BOLD), (int) (32 * ratio));
-		this.mFont.load();
 
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 		BitmapTextureAtlas mBgBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 640, 960,
@@ -142,7 +130,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowMenuIfNeed() {
 		if (menu == null) {
-			menu = new MenuRectang(this, stringManger,218 * ratio, 300 * ratio, 424 * ratio, 450 * ratio, ratio, customFont,
+			menu = new MenuRectang(this, stringManger, 218 * ratio, 300 * ratio, 424 * ratio, 450 * ratio, ratio, customFont,
 					getVertexBufferObjectManager());
 		}
 
@@ -313,7 +301,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowChooseModeIfNeed() {
 		if (modeGame == null) {
-			modeGame = new MenuModeGameRectang(stringManger,218 * ratio, 300 * ratio, 424 * ratio, 470 * ratio, ratio, customFont,
+			modeGame = new MenuModeGameRectang(this,stringManger,218 * ratio, 300 * ratio, 424 * ratio, 600 * ratio, ratio, customFont,
 					mBackRegion, getVertexBufferObjectManager());
 		}
 		modeGame.attachToScene(mScene);
@@ -374,7 +362,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowSettingsMenuIfNeed() {
 		if (settingGame == null) {
-			settingGame = new MenuSettingGameRectangle(stringManger,218 * ratio, 300 * ratio, 424 * ratio, 450 * ratio, ratio,
+			settingGame = new MenuSettingGameRectangle(stringManger,218 * ratio, 300 * ratio, 424 * ratio, 600 * ratio, ratio,
 					customFont, mSoundTextureRegion, mMusicTextureRegion, mBackRegion, getVertexBufferObjectManager());
 		}
 		settingGame.attachToScene(mScene);

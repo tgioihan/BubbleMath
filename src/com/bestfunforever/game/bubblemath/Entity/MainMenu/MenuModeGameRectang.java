@@ -29,23 +29,25 @@ import com.bestfunforever.game.bubblemath.StringManger;
 
 public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectangle {
 
-	private SpriteImplement mFruitMode;
-	private SpriteImplement mFindMode;
-	private SpriteImplement mRunMode;
-	private float margin = 10;
+	private TextExtension mFruitMode;
+	private TextExtension mFindMode;
+	private TextExtension mRunMode;
+	private float margin = 0;
 	private BubbleSprite bubbleSprite;
-	private TextureRegion mfruitRegion;
-	private TextureRegion mfindRegion;
-	private TextureRegion mRunRegion;
 
-	public MenuModeGameRectang(SimpleBaseGameActivity context,StringManger stringManger, float pX, float pY, float pWidth, float pHeight, float ratio,
-			Font font, TextureRegion mBackRegion, VertexBufferObjectManager pVertexBufferObjectManager) {
+	public MenuModeGameRectang(SimpleBaseGameActivity context, StringManger stringManger, float pX, float pY,
+			float pWidth, float pHeight, float ratio, Font font, TextureRegion mBackRegion,
+			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 		setColor(Color.TRANSPARENT);
-		onLoadReource(context);
-		mFruitMode = new SpriteImplement(0, 0,  mfruitRegion.getWidth()*ratio,mfruitRegion.getHeight()*ratio,mfruitRegion, pVertexBufferObjectManager);
-		mFindMode = new SpriteImplement(0, mFruitMode.getY() + mFruitMode.getHeight() + margin * ratio,mfindRegion.getWidth()*ratio,mfindRegion.getHeight()*ratio,mfindRegion, pVertexBufferObjectManager);
-		mRunMode = new SpriteImplement(0, mFindMode.getY() + mFindMode.getHeight() + margin * ratio,mRunRegion.getWidth()*ratio,mRunRegion.getHeight()*ratio,mRunRegion, pVertexBufferObjectManager);
+		mFruitMode = new TextExtension(0, 0, font, stringManger.getStringFromKey(StringManger.FRUIT), 10,
+				new TextOptions(AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mFindMode = new TextExtension(0, mFruitMode.getY() + mFruitMode.getHeight() + margin * ratio, font,
+				stringManger.getStringFromKey(StringManger.FINDMODE), 10, new TextOptions(AutoWrap.WORDS, pWidth,
+						HorizontalAlign.CENTER), pVertexBufferObjectManager);
+		mRunMode = new TextExtension(0, mFindMode.getY() + mFindMode.getHeight() + margin * ratio, font,
+				stringManger.getStringFromKey(StringManger.RUN), 10, new TextOptions(AutoWrap.WORDS, pWidth,
+						HorizontalAlign.CENTER), pVertexBufferObjectManager);
 
 		// float height = mRunMode.getY() + mRunMode.getHeight();
 		float disY = 0;
@@ -66,28 +68,6 @@ public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectan
 		attachChild(mFindMode);
 		attachChild(mRunMode);
 	}
-	
-
-	private void onLoadReource(SimpleBaseGameActivity context) {
-		BitmapTextureAtlas fruitModeAtlas = new BitmapTextureAtlas(context.getTextureManager(), 329, 67,
-				TextureOptions.BILINEAR);
-		this.mfruitRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(fruitModeAtlas, context,
-				"fruit_mode.png", 0, 0); // 64x32
-		fruitModeAtlas.load();
-
-		BitmapTextureAtlas findModeAtlas = new BitmapTextureAtlas(context.getTextureManager(), 324, 67,
-				TextureOptions.BILINEAR);
-		this.mfindRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(findModeAtlas, context,
-				"find_mode.png", 0, 0); // 64x32
-		findModeAtlas.load();
-
-		BitmapTextureAtlas runModeAtlas = new BitmapTextureAtlas(context.getTextureManager(), 310, 76,
-				TextureOptions.BILINEAR);
-		this.mRunRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(runModeAtlas, context, "run_mode.png",
-				0, 0); // 64x32
-		runModeAtlas.load();
-	}
-
 
 	public void attachToScene(Scene scene) {
 		resetMenu();

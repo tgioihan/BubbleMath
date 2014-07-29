@@ -51,9 +51,11 @@ public class FindModeActivty extends BubbleGameActivity {
 
 	@Override
 	public void onTickerTextComplete() {
+		super.onTickerTextComplete();
 		Log.d(tag,
 				tag + " onTickerTextComplete " + tickTextManagable.getText()
 						+ (!tickTextManagable.getText().equals("")));
+		if(!endgame)
 		if (!tickTextManagable.getText().equals(""))
 			start();
 	}
@@ -72,6 +74,8 @@ public class FindModeActivty extends BubbleGameActivity {
 	public void onFinishSeek(float percent, boolean userTouch) {
 		if (mGame.isComplete()) {
 			Log.d("", "game finish ");
+			endgame = true;
+			showEndGame();
 		} else {
 			animateGameObjectOut();
 		}
@@ -92,6 +96,7 @@ public class FindModeActivty extends BubbleGameActivity {
 		createPool();
 		Log.d(tag, tag + " initMathGraphicFrame pool then start");
 		tickTextManagable.setText(stringManger.getStringFromKey(StringManger.RUN_MSG));
+		tickTextManagable.setY(messageFrame.getHeight() / 2 - tickTextManagable.getHeight() / 2);
 
 	}
 
@@ -400,11 +405,11 @@ public class FindModeActivty extends BubbleGameActivity {
 							Log.d(tag, tag + " right value " + value);
 							mGame.incressRightAnswer();
 							animateRightAnswer();
-						}else{
+						} else {
 							lockUserAction(true);
 							item.onNormalState();
 						}
-						
+
 					}
 				});
 				scene.registerTouchArea(item);
@@ -495,6 +500,33 @@ public class FindModeActivty extends BubbleGameActivity {
 			for (Item item : mAnswerSpriteList) {
 				item.setEnabled(enable);
 			}
+		}
+	}
+
+	@Override
+	protected void onCloseEndGame() {
+		for (Item item : mAnswerSpriteList) {
+			item.setEnabled(true);
+			item.setVisible(true);
+		}
+		for (Item item : mGraphicObjects) {
+			item.setEnabled(true);
+			item.setVisible(true);
+		}
+		if(!endgame){
+			start();
+		}
+	}
+
+	@Override
+	protected void onEndGame() {
+		for (Item item : mAnswerSpriteList) {
+			item.setEnabled(false);
+			item.setVisible(false);
+		}
+		for (Item item : mGraphicObjects) {
+			item.setEnabled(false);
+			item.setVisible(false);
 		}
 	}
 

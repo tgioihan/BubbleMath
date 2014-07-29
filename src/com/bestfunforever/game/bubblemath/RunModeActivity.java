@@ -26,6 +26,7 @@ import com.bestfunforever.andengine.uikit.listview.OnItemClickListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.Item;
+import com.bestfunforever.game.bubblemath.Entity.SpriteWithValue;
 import com.bestfunforever.game.bubblemath.Util.RunModeGame;
 
 public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemClickListener {
@@ -45,6 +46,8 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 	@Override
 	public void onTickerTextComplete() {
+		super.onTickerTextComplete();
+		if(!endgame)
 		start();
 	}
 
@@ -62,6 +65,8 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 	public void onFinishSeek(float percent, boolean userTouch) {
 		if (mGame.isComplete()) {
 			Log.d("", "game finish ");
+			endgame = true;
+			showEndGame();
 		} else {
 			moveOutMathFuntion();
 		}
@@ -72,11 +77,12 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		mGame = new RunModeGame();
 		mListView = new AutoScrollHorizontalList(this, 10 * ratio, mSeekBar.getY() + mSeekBar.getHeight() + 30 * ratio,
 				CAMERA_WIDTH - 20 * ratio, greenBubbleRegion.getHeight() * ratio, getVertexBufferObjectManager());
-		adapter = new MathAdapter(greenBubbleRegion, Config.getMax(preferences), ratio, customFont, getVertexBufferObjectManager());
+		adapter = new MathAdapter(greenBubbleRegion, Config.getMax(preferences), ratio, customFont,
+				getVertexBufferObjectManager());
 		scene.attachChild(mListView);
 		mListView.setAdapter(adapter);
 		mListView.setSelection(Integer.MAX_VALUE / 2);
-		mListView.setScrollVelocity(-3f*ratio);
+		mListView.setScrollVelocity(-3f * ratio);
 		scene.registerTouchArea(mListView);
 		mListView.setOnItemClickListenner(new OnItemClickListenner() {
 
@@ -112,6 +118,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		scene.attachChild(operand1);
 		scene.attachChild(operand2);
 		tickTextManagable.setText(stringManger.getStringFromKey(StringManger.RUN_MSG));
+		tickTextManagable.setY(messageFrame.getHeight() / 2 - tickTextManagable.getHeight() / 2);
 
 	}
 
@@ -271,8 +278,8 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		float operator2Destiny = operand1Destiny + operand1.getWidth() + marginTextMath;
 		float operand2Destiny = operator2Destiny + operator2.getWidth() + marginTextMath;
 		float operator3Destiny = operand2Destiny + operand2.getWidth() + marginTextMath;
-		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(), operator11Destiny,
-				EaseBounceOut.getInstance()));
+		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(),
+				operator11Destiny, EaseBounceOut.getInstance()));
 		operator2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator2.getX(), operator2Destiny,
 				EaseBounceOut.getInstance()));
 		operator3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator3.getX(), operator3Destiny,
@@ -283,13 +290,13 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		operand1.setX(operand1Destiny);
 		operand2.setX(operand2Destiny);
 		operand1.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut.getInstance()));
-		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1,new IEntityModifierListener() {
-			
+		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, new IEntityModifierListener() {
+
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-				
+
 			}
-			
+
 			@Override
 			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
 				lockUserAction(true);
@@ -300,12 +307,12 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 	}
 
 	private void moveOutMathFuntion() {
-		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(), -operator1.getWidth(),
+		operator1.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator1.getX(), -operator1
+				.getWidth(), EaseBounceIn.getInstance()));
+		operator2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator2.getX(), CAMERA_WIDTH,
 				EaseBounceIn.getInstance()));
-		operator2.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator2.getX(), CAMERA_WIDTH, EaseBounceIn
-				.getInstance()));
-		operator3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator3.getX(), CAMERA_WIDTH, EaseBounceIn
-				.getInstance()));
+		operator3.registerEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, operator3.getX(), CAMERA_WIDTH,
+				EaseBounceIn.getInstance()));
 
 		operand1.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0, EaseBounceIn.getInstance()));
 		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0, new IEntityModifierListener() {
@@ -344,6 +351,33 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 	@Override
 	protected void lockUserAction(boolean enable) {
 		mListView.setEnable(enable);
+	}
+
+	@Override
+	protected void onCloseEndGame() {
+		operator1.setVisible(true);
+		operator2.setVisible(true);
+		operator3.setVisible(true);
+		operand1.setVisible(true);
+		operand2.setVisible(true);
+		mListView.setVisible(true);
+		mListView.setEnable(true);
+		mListView.setRun(true);
+		if(!endgame){
+			start();
+		}
+	}
+
+	@Override
+	protected void onEndGame() {
+		operator1.setVisible(false);
+		operator2.setVisible(false);
+		operator3.setVisible(false);
+		operand1.setVisible(false);
+		operand2.setVisible(false);
+		mListView.setVisible(false);
+		mListView.setEnable(false);
+		mListView.setRun(false);
 	}
 
 }
