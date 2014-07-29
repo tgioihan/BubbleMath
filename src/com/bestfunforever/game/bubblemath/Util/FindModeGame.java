@@ -2,6 +2,8 @@ package com.bestfunforever.game.bubblemath.Util;
 
 import java.util.Random;
 
+import android.util.Log;
+
 import com.bestfunforever.andengine.uikit.util.Util;
 
 public class FindModeGame {
@@ -10,32 +12,24 @@ public class FindModeGame {
 	Random random;
 	private int maxRightAnswer;
 	private int rightAnswerCount;
-	private int operator1;
-	private int operator2;
-	private int operator3;
+	private int resultPosition;
+	private int[] listNumbers;
+	private int result;
 
-	public int getOperator1() {
-		return operator1;
+	public int[] getListNumbers() {
+		return listNumbers;
 	}
 
-	public void setOperator1(int operator1) {
-		this.operator1 = operator1;
+	public void setListNumbers(int[] listNumbers) {
+		this.listNumbers = listNumbers;
 	}
 
-	public int getOperator2() {
-		return operator2;
+	public Random getRandom() {
+		return random;
 	}
 
-	public void setOperator2(int operator2) {
-		this.operator2 = operator2;
-	}
-
-	public int getOperator3() {
-		return operator3;
-	}
-
-	public void setOperator3(int operator3) {
-		this.operator3 = operator3;
+	public void setRandom(Random random) {
+		this.random = random;
 	}
 
 	public FindModeGame() {
@@ -48,9 +42,17 @@ public class FindModeGame {
 	}
 
 	public void generate(int max) {
-		operator1 = random.nextInt(max - 2);
-		operator2 = operator1 + 1;
-		operator3 = operator2 + 1;
+		int divValue = Util.randInt(1, 3);
+		int itemCountMax = max / divValue;
+		Log.d(tag, tag+" divValue "+divValue+" itemCountMax "+itemCountMax);
+		int itemCOunt = Util.randInt(3, itemCountMax);
+		int startItem = Util.randInt(0, max - divValue * itemCOunt);
+		setResultPosition(random.nextInt(itemCOunt));
+		listNumbers = new int[itemCOunt];
+		for (int i = 0; i < listNumbers.length; i++) {
+			listNumbers[i] = startItem + i * divValue;
+		}
+		setResult(listNumbers[resultPosition]);
 	}
 
 	public void reset() {
@@ -90,6 +92,22 @@ public class FindModeGame {
 
 	public boolean isComplete() {
 		return rightAnswerCount == maxRightAnswer;
+	}
+
+	public int getResultPosition() {
+		return resultPosition;
+	}
+
+	public void setResultPosition(int resultPosition) {
+		this.resultPosition = resultPosition;
+	}
+
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
 	}
 
 }

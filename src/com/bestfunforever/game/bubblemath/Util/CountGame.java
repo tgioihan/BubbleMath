@@ -25,8 +25,15 @@ public class CountGame {
 	public static final String[] fruitPng = new String[] { "apple.png",
 			"cherry.png", "mango_icon.png", "orange_icon.png", "pear.png",
 			"pineapple_icon.png" };
-	public static final String[] fruitName = new String[] { "apple", "banana",
-			"cherry", "pineapple", "manggo", "strawberry" };
+	public String[] fruitName ;
+
+	public String[] getFruitName() {
+		return fruitName;
+	}
+
+	public void setFruitName(String[] fruitName) {
+		this.fruitName = fruitName;
+	}
 
 	public CountGame() {
 		this(10);

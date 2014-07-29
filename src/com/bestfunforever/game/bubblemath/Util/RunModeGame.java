@@ -83,8 +83,8 @@ public class RunModeGame {
 				setOperand1(operandRs);
 				setOperand2(operands[2]);
 				operatorsVls[0] = random.nextInt(maxInt);
-				operatorsVls[1] = Util.randInt(0, maxInt - 1 - operatorsVls[0]);
-				operatorsVls[2] = operatorsVls[0] + operatorsVls[1];
+				operatorsVls[1] = Util.randInt( operatorsVls[0], maxInt - 1 );
+				operatorsVls[2] = -operatorsVls[0] + operatorsVls[1];
 			} else if (oprRsPos == 1) {
 				setOperand1(operandRs);
 				setOperand2(operands[2]);
@@ -116,8 +116,8 @@ public class RunModeGame {
 			} else if (oprRsPos == 1) {
 				setOperand2(operandRs);
 				setOperand1(operands[2]);
-				operatorsVls[1] = random.nextInt(maxInt);
-				operatorsVls[0] = Util.randInt(0, maxInt - operatorsVls[0]);
+				operatorsVls[0] = random.nextInt(maxInt);
+				operatorsVls[1] = Util.randInt( operatorsVls[0], maxInt -1);
 				operatorsVls[2] = operatorsVls[1] - operatorsVls[0];
 			} else if (oprRsPos == 2) {
 				setOperand2(operandRs);

@@ -45,7 +45,6 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 	@Override
 	public void onTickerTextComplete() {
-		mListView.setRun(true);
 		start();
 	}
 
@@ -77,15 +76,15 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		scene.attachChild(mListView);
 		mListView.setAdapter(adapter);
 		mListView.setSelection(Integer.MAX_VALUE / 2);
-		mListView.setScrollVelocity(-3f);
+		mListView.setScrollVelocity(-3f*ratio);
 		scene.registerTouchArea(mListView);
 		mListView.setOnItemClickListenner(new OnItemClickListenner() {
 
 			@Override
 			public void onClick(IAreaShape view, int position) {
+				lockUserAction(false);
 				((Item) view).setState(State.SELECTED);
 				checkAnswer(((Item) view).getValue());
-				mListView.setRun(false);
 			}
 		});
 
@@ -112,7 +111,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		scene.attachChild(operator3);
 		scene.attachChild(operand1);
 		scene.attachChild(operand2);
-		tickTextManagable.setText("Giup minh giai bai toan nay voi , kho qua , hu hu");
+		tickTextManagable.setText(stringManger.getStringFromKey(StringManger.RUN_MSG));
 
 	}
 
@@ -127,6 +126,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 	protected void checkAnswer(Object value) {
 		Text mQuestionText = getQuesttionText();
+		mListView.setRun(false);
 		if (mGame.checkValue(value)) {
 			mGame.incressRightAnswer();
 			if (mQuestionText != null) {
@@ -165,6 +165,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 					for (IAreaShape item : mListView.getChildrents()) {
 						((Item) item).onNormalState();
 					}
+					lockUserAction(true);
 					mListView.setRun(true);
 				}
 			}, 500);
@@ -204,6 +205,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 	}
 
 	protected void start() {
+		lockUserAction(false);
 		mGame.generate(Config.getMax(preferences));
 
 		operator1.setText(String.valueOf(mGame.getOperatorsVls()[0]));
@@ -281,7 +283,19 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		operand1.setX(operand1Destiny);
 		operand2.setX(operand2Destiny);
 		operand1.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut.getInstance()));
-		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut.getInstance()));
+		operand2.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1,new IEntityModifierListener() {
+			
+			@Override
+			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+				
+			}
+			
+			@Override
+			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+				lockUserAction(true);
+				mListView.setRun(true);
+			}
+		}, EaseBounceOut.getInstance()));
 
 	}
 
@@ -306,6 +320,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 				for (IAreaShape item : mListView.getChildrents()) {
 					((Item) item).onNormalState();
 				}
+				lockUserAction(true);
 				mListView.setRun(true);
 				start();
 			}
@@ -324,6 +339,11 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		});
 
 		return false;
+	}
+
+	@Override
+	protected void lockUserAction(boolean enable) {
+		mListView.setEnable(enable);
 	}
 
 }

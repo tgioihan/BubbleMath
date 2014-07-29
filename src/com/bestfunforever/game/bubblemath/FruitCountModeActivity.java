@@ -39,9 +39,26 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	private float centerY;
 
 	@Override
+	protected void onLoadResource() {
+		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (140),
+				(int) (140), TextureOptions.BILINEAR);
+		greenBubbleRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(highscoreMenuAtlas, this,
+				"circle_green.png", 0, 0, 1, 1);
+		highscoreMenuAtlas.load();
+
+		BitmapTextureAtlas fruitAtlas = new BitmapTextureAtlas(this.getTextureManager(), 118, (int) (118)
+				* CountGame.fruitPng.length, TextureOptions.BILINEAR);
+		fruitRegions = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(fruitAtlas, this, "fruit_art.png",
+				0, 0, 1, CountGame.fruitPng.length);
+		fruitAtlas.load();
+
+	}
+
+	@Override
 	public void onTickerTextComplete() {
-		Log.d(tag, tag + " onTickerTextComplete " + tickTextManagable.getText()
-				+ (!tickTextManagable.getText().equals("")));
+		Log.d(tag,
+				tag + " onTickerTextComplete " + tickTextManagable.getText()
+						+ (!tickTextManagable.getText().equals("")));
 		if (!tickTextManagable.getText().equals(""))
 			animateAnswerObjectIn();
 	}
@@ -66,20 +83,25 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	}
 
 	private void animateGameObjectOut() {
-		animateAnswerObjectOut();
 		animateGraphicObjectOut();
 	}
 
 	@Override
 	protected void initMathGraphicFrame() {
 		mGame = new CountGame();
+		String[] fruitNames = new String[6];
+		fruitNames[0] = stringManger.getStringFromKey(StringManger.APPLE);
+		fruitNames[1] = stringManger.getStringFromKey(StringManger.BANANA);
+		fruitNames[2] = stringManger.getStringFromKey(StringManger.CHERRY);
+		fruitNames[3] = stringManger.getStringFromKey(StringManger.PINEAAPPLE);
+		fruitNames[4] = stringManger.getStringFromKey(StringManger.MANGO);
+		fruitNames[5] = stringManger.getStringFromKey(StringManger.strawberry);
+		mGame.setFruitName(fruitNames);
 		Log.d(tag, tag + " initMathGraphicFrame ");
 		initBubbleAnswerList();
 		Log.d(tag, tag + " initMathGraphicFrame anser list");
 
-		centerY = mAnswerSpriteList.get(0).getY()
-				+ (messageFrame.getY() - mAnswerSpriteList.get(0).getY())
-				/ 2;
+		centerY = mAnswerSpriteList.get(0).getY() + (messageFrame.getY() - mAnswerSpriteList.get(0).getY()) / 2;
 		createPool();
 		Log.d(tag, tag + " initMathGraphicFrame pool then start");
 		start();
@@ -90,9 +112,8 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 		// TODO Auto-generated method stub
 		mPool = new MultiPool<SpriteWithValue>();
 		for (int i = 0; i < CountGame.fruitPng.length; i++) {
-			mPool.registerPool(i,
-					new GameObjectGenerate(fruitRegions.getTextureRegion(i),
-							ratio, getVertexBufferObjectManager()));
+			mPool.registerPool(i, new GameObjectGenerate(fruitRegions.getTextureRegion(i), ratio,
+					getVertexBufferObjectManager()));
 		}
 	}
 
@@ -102,6 +123,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	private ArrayList<Integer> rights = new ArrayList<Integer>();
 
 	private void start() {
+		lockUserAction(false);
 		mGame.generate(Config.getMax(preferences));
 		int totalItem = mGame.getTotalItem();
 		int itemType = mGame.getItemRsPos();
@@ -109,8 +131,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 		mGraphicObjects.clear();
 		Log.d(tag, tag + " start result " + result + " totalItem " + totalItem);
-		int[] rsPositions = GameUtil.gennerateRandomArray(random, result,
-				totalItem);
+		int[] rsPositions = GameUtil.gennerateRandomArray(random, result, totalItem);
 		Log.d(tag, tag + " rsPositions " + rsPositions);
 		for (int i = 0; i < totalItem; i++) {
 			if (GameUtil.matchItemInArray(i, rsPositions)) {
@@ -124,8 +145,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 				mGraphicObjects.add(value);
 			} else {
 				Log.d(tag, tag + " initial fruit normal type " + i);
-				int type = GameUtil.genneratePosionNotMatch(random, itemType,
-						CountGame.fruitPng.length);
+				int type = GameUtil.genneratePosionNotMatch(random, itemType, CountGame.fruitPng.length);
 				SpriteWithValue value = mPool.obtainPoolItem(type);
 				value.setType(type);
 				value.setScale(1);
@@ -158,18 +178,14 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 				destinys[i] = width1;
 				mGraphicObjects.get(i).setY(0);
 				if (i < row1 / 2) {
-					mGraphicObjects.get(i).setX(
-							-mGraphicObjects.get(i).getWidth());
+					mGraphicObjects.get(i).setX(-mGraphicObjects.get(i).getWidth());
 					lefts.add(i);
 				} else {
 					mGraphicObjects.get(i).setX(CAMERA_WIDTH);
 					rights.add(i);
 				}
-				Log.d(tag, tag + " row1 " + i + " "
-						+ mGraphicObjects.get(i).getWidth() + " width "
-						+ width1);
-				width1 += mGraphicObjects.get(i).getWidth()
-						+ distanceGraphicObject * ratio;
+				Log.d(tag, tag + " row1 " + i + " " + mGraphicObjects.get(i).getWidth() + " width " + width1);
+				width1 += mGraphicObjects.get(i).getWidth() + distanceGraphicObject * ratio;
 
 			}
 
@@ -182,22 +198,18 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 			for (int i = 0; i < row2; i++) {
 				destinys[i + row1] = width2;
 				mGraphicObjects.get(i + row1).setY(
-						mGraphicObjects.get(0).getY()
-								+ mGraphicObjects.get(0).getHeight()
-								+ distanceGraphicObject * ratio);
+						mGraphicObjects.get(0).getY() + mGraphicObjects.get(0).getHeight() + distanceGraphicObject
+								* ratio);
 				if (i < row1 / 2) {
-					mGraphicObjects.get(i + row1).setX(
-							-mGraphicObjects.get(i).getWidth());
+					mGraphicObjects.get(i + row1).setX(-mGraphicObjects.get(i).getWidth());
 					lefts.add(i + row1);
 				} else {
 					mGraphicObjects.get(i + row1).setX(CAMERA_WIDTH);
 					rights.add(i + row1);
 				}
-				Log.d(tag, tag + " row2 " + (i + row1) + " "
-						+ mGraphicObjects.get(i + row1).getWidth() + " width "
+				Log.d(tag, tag + " row2 " + (i + row1) + " " + mGraphicObjects.get(i + row1).getWidth() + " width "
 						+ width1);
-				width2 += mGraphicObjects.get(i + row1).getWidth()
-						+ distanceGraphicObject * ratio;
+				width2 += mGraphicObjects.get(i + row1).getWidth() + distanceGraphicObject * ratio;
 			}
 
 			float disX2 = CAMERA_WIDTH / 2 - width2 / 2;
@@ -206,57 +218,42 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 				destinys[i + row1] += disX2;
 			}
 
-			float height = mGraphicObjects.get(totalItem - 1).getY()
-					+ mGraphicObjects.get(totalItem - 1).getHeight();
+			float height = mGraphicObjects.get(totalItem - 1).getY() + mGraphicObjects.get(totalItem - 1).getHeight();
 
 			float disY = centerY - height / 2;
 			for (int i = 0; i < row1; i++) {
-				mGraphicObjects.get(i).setY(
-						mGraphicObjects.get(i).getY() + disY);
+				mGraphicObjects.get(i).setY(mGraphicObjects.get(i).getY() + disY);
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
-								.getX(), destinys[i], EaseBounceOut
-								.getInstance()));
-				Log.d(tag, tag + " start animation " + i + " destinys[i] "
-						+ destinys[i]);
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), destinys[i],
+								EaseBounceOut.getInstance()));
+				Log.d(tag, tag + " start animation " + i + " destinys[i] " + destinys[i]);
 				scene.attachChild(mGraphicObjects.get(i));
 			}
 			for (int i = 0; i < row2; i++) {
-				mGraphicObjects.get(i + row1).setY(
-						mGraphicObjects.get(i + row1).getY() + disY);
+				mGraphicObjects.get(i + row1).setY(mGraphicObjects.get(i + row1).getY() + disY);
 				if (i == row2 - 1) {
 					mGraphicObjects.get(i + row1).registerEntityModifier(
-							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
-									.get(i + row1).getX(), destinys[i + row1],
-									new IEntityModifierListener() {
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i + row1).getX(), destinys[i
+									+ row1], new IEntityModifierListener() {
 
-										@Override
-										public void onModifierStarted(
-												IModifier<IEntity> pModifier,
-												IEntity pItem) {
+								@Override
+								public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
-										}
+								}
 
-										@Override
-										public void onModifierFinished(
-												IModifier<IEntity> pModifier,
-												IEntity pItem) {
-											String mesg = "Co bao nhieu qua "
-													+ CountGame.fruitName[mGame
-															.getItemRsPos()]
-													+ " trong hinh tren";
-											tickTextManagable.setText(mesg);
+								@Override
+								public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+									String msg = String.format(stringManger.getStringFromKey(StringManger.FRUIT_MSG), mGame.getFruitName()[mGame.getItemRsPos()]);
+									tickTextManagable.setText(msg);
 
-										}
-									}, EaseBackOut.getInstance()));
+								}
+							}, EaseBackOut.getInstance()));
 				} else {
 					mGraphicObjects.get(i + row1).registerEntityModifier(
-							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
-									.get(i + row1).getX(), destinys[i + row1],
-									EaseBackOut.getInstance()));
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i + row1).getX(), destinys[i
+									+ row1], EaseBackOut.getInstance()));
 				}
-				Log.d(tag, tag + " start animation " + (i + row1)
-						+ " destinys[i] " + destinys[(i + row1)]);
+				Log.d(tag, tag + " start animation " + (i + row1) + " destinys[i] " + destinys[(i + row1)]);
 				scene.attachChild(mGraphicObjects.get(i + row1));
 			}
 
@@ -268,62 +265,48 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 				destinys[i] = width1;
 				mGraphicObjects.get(i).setY(0);
 				if (i < totalItem / 2) {
-					mGraphicObjects.get(i).setX(
-							-mGraphicObjects.get(i).getWidth());
+					mGraphicObjects.get(i).setX(-mGraphicObjects.get(i).getWidth());
 					lefts.add(i);
 				} else {
 					mGraphicObjects.get(i).setX(CAMERA_WIDTH);
 					rights.add(i);
 				}
-				width1 += mGraphicObjects.get(i).getWidth()
-						+ distanceGraphicObject * ratio;
+				width1 += mGraphicObjects.get(i).getWidth() + distanceGraphicObject * ratio;
 			}
 			float disX1 = CAMERA_WIDTH / 2 - width1 / 2;
 			for (int i = 0; i < totalItem; i++) {
 				destinys[i] += disX1;
 			}
 
-			float height = mGraphicObjects.get(totalItem - 1).getY()
-					+ mGraphicObjects.get(totalItem - 1).getHeight();
+			float height = mGraphicObjects.get(totalItem - 1).getY() + mGraphicObjects.get(totalItem - 1).getHeight();
 
 			float disY = centerY - height / 2;
 
 			for (int i = 0; i < totalItem; i++) {
-				mGraphicObjects.get(i).setY(
-						mGraphicObjects.get(i).getY() + disY);
+				mGraphicObjects.get(i).setY(mGraphicObjects.get(i).getY() + disY);
 				if (i == totalItem - 1) {
 					mGraphicObjects.get(i).registerEntityModifier(
-							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
-									.get(i).getX(), destinys[i],
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), destinys[i],
 									new IEntityModifierListener() {
 
 										@Override
-										public void onModifierStarted(
-												IModifier<IEntity> pModifier,
-												IEntity pItem) {
+										public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
 										}
 
 										@Override
-										public void onModifierFinished(
-												IModifier<IEntity> pModifier,
-												IEntity pItem) {
-											String mesg = "Co bao nhieu qua "
-													+ CountGame.fruitName[mGame
-															.getItemRsPos()]
-													+ " trong hinh tren";
-											tickTextManagable.setText(mesg);
+										public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+											String msg = String.format(stringManger.getStringFromKey(StringManger.FRUIT_MSG),  mGame.getFruitName()[mGame.getItemRsPos()]);
+											tickTextManagable.setText(msg);
 
 										}
 									}, EaseBackOut.getInstance()));
 				} else {
 					mGraphicObjects.get(i).registerEntityModifier(
-							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
-									.get(i).getX(), destinys[i], EaseBackOut
-									.getInstance()));
+							new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), destinys[i],
+									EaseBackOut.getInstance()));
 				}
-				Log.d(tag, tag + " start animation " + (i) + " destinys[i] "
-						+ destinys[(i)]);
+				Log.d(tag, tag + " start animation " + (i) + " destinys[i] " + destinys[(i)]);
 				scene.attachChild(mGraphicObjects.get(i));
 			}
 
@@ -337,39 +320,33 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 		for (Integer i : lefts) {
 			if (count == lefts.size() - 1) {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
-								.getX(), -mGraphicObjects.get(i).getWidth(),
-								new IEntityModifierListener() {
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), -mGraphicObjects.get(
+								i).getWidth(), new IEntityModifierListener() {
+
+							@Override
+							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+
+							}
+
+							@Override
+							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+								runOnUpdateThread(new Runnable() {
 
 									@Override
-									public void onModifierStarted(
-											IModifier<IEntity> pModifier,
-											IEntity pItem) {
-
+									public void run() {
+										for (Item item : mAnswerSpriteList) {
+											item.onNormalState();
+										}
+										removeGameGraphicObject();
 									}
 
-									@Override
-									public void onModifierFinished(
-											IModifier<IEntity> pModifier,
-											IEntity pItem) {
-										runOnUpdateThread(new Runnable() {
-
-											@Override
-											public void run() {
-												for (Item item : mAnswerSpriteList) {
-													item.onNormalState();
-												}
-												removeGameGraphicObject();
-											}
-
-										});
-									}
-								}, EaseBackIn.getInstance()));
+								});
+							}
+						}, EaseBackIn.getInstance()));
 			} else {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
-								.getX(), -mGraphicObjects.get(i).getWidth(),
-								EaseBackIn.getInstance()));
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), -mGraphicObjects.get(
+								i).getWidth(), EaseBackIn.getInstance()));
 			}
 			count++;
 
@@ -378,21 +355,16 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 		for (Integer i : rights) {
 			if (count == rights.size() - 1 && !leftListenner) {
 				mGraphicObjects.get(i).registerEntityModifier(
-						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i)
-								.getX(), CAMERA_WIDTH,
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), CAMERA_WIDTH,
 								new IEntityModifierListener() {
 
 									@Override
-									public void onModifierStarted(
-											IModifier<IEntity> pModifier,
-											IEntity pItem) {
+									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
 									}
 
 									@Override
-									public void onModifierFinished(
-											IModifier<IEntity> pModifier,
-											IEntity pItem) {
+									public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
 										runOnUpdateThread(new Runnable() {
 
 											@Override
@@ -407,11 +379,9 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 									}
 								}, EaseBackIn.getInstance()));
 			} else {
-				mGraphicObjects.get(i)
-						.registerEntityModifier(
-								new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects
-										.get(i).getX(), CAMERA_WIDTH,
-										EaseBackIn.getInstance()));
+				mGraphicObjects.get(i).registerEntityModifier(
+						new MoveXModifier(Config.ANIMATE_DURATION, mGraphicObjects.get(i).getX(), CAMERA_WIDTH,
+								EaseBackIn.getInstance()));
 			}
 			count++;
 		}
@@ -434,8 +404,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 			int width = 0;
 			for (int i = 0; i < 4; i++) {
-				Item item = new Item(ratio, customFont, greenBubbleRegion,
-						getVertexBufferObjectManager());
+				Item item = new Item(ratio, customFont, greenBubbleRegion, getVertexBufferObjectManager());
 				item.setX(width);
 				item.setY(y);
 				if (i < 3)
@@ -453,12 +422,18 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 					@Override
 					public void onCLick(IAreaShape view) {
+						lockUserAction(false);
+						clearStateAnswerList();
 						final Item item = (Item) view;
+						item.onSelectedState();
 						int value = (Integer) item.getValue();
 						if (value == mGame.getResult()) {
 							Log.d(tag, tag + " right value " + value);
 							mGame.incressRightAnswer();
 							mSeekBar.setPercent(mGame.getProcessPercent(), true);
+						}else{
+							item.onNormalState();;
+							lockUserAction(true);
 						}
 					}
 				});
@@ -472,8 +447,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	private void animateAnswerObjectOut() {
 		for (int i = 0; i < 4; i++) {
 			Item item = mAnswerSpriteList.get(i);
-			item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0,
-					EaseBounceIn.getInstance()));
+			item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0, EaseBounceIn.getInstance()));
 		}
 	}
 
@@ -485,46 +459,40 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 			item.setScale(0);
 			item.setText(rs[i]);
 			if (i < 3) {
-				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
-						1, EaseBounceOut.getInstance()));
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1, EaseBounceOut
+						.getInstance()));
 			} else {
-				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0,
-						1, new IEntityModifierListener() {
+				item.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 0, 1,
+						new IEntityModifierListener() {
 
 							@Override
-							public void onModifierStarted(
-									IModifier<IEntity> pModifier, IEntity pItem) {
+							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
 
 							}
 
 							@Override
-							public void onModifierFinished(
-									IModifier<IEntity> pModifier, IEntity pItem) {
-
+							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+								lockUserAction(true);
 							}
 						}, EaseBounceOut.getInstance()));
 			}
 		}
 	}
 
-	@Override
-	protected void onLoadResource() {
-		BitmapTextureAtlas highscoreMenuAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (140), (int) (140),
-				TextureOptions.BILINEAR);
-		greenBubbleRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(highscoreMenuAtlas, this,
-						"circle_green.png", 0, 0, 1, 1);
-		highscoreMenuAtlas.load();
-
-		BitmapTextureAtlas fruitAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), 118, (int) (118)
-						* CountGame.fruitPng.length, TextureOptions.BILINEAR);
-		fruitRegions = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(fruitAtlas, this, "fruit_art.png", 0, 0,
-						1, CountGame.fruitPng.length);
-		fruitAtlas.load();
-
+	public void clearStateAnswerList() {
+		if (mAnswerSpriteList != null) {
+			for (Item item : mAnswerSpriteList) {
+				item.onNormalState();
+			}
+		}
 	}
 
+	@Override
+	protected void lockUserAction(boolean enable) {
+		if (mAnswerSpriteList != null) {
+			for (Item item : mAnswerSpriteList) {
+				item.setEnabled(enable);
+			}
+		}
+	}
 }

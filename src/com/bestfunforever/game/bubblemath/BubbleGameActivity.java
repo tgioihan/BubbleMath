@@ -1,8 +1,11 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.util.Locale;
 import java.util.Random;
 
 import org.andengine.engine.camera.hud.HUD;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
@@ -35,9 +38,8 @@ import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MathExpanableMenu;
 
-public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
-		implements IOnMenuItemClickListener, ITickerTextListenner,
-		ISeekBarListenner {
+public abstract class BubbleGameActivity extends PortraitAdmobGameActivity implements IOnMenuItemClickListener,
+		ITickerTextListenner, ISeekBarListenner {
 
 	protected TiledTextureRegion childFaceRegion;
 	protected TextureRegion mBgTextureRegion;
@@ -68,133 +70,133 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 	private String[] childFaces = new String[] { "boy.png", "girl.png" };
 	protected TickerTextManagable tickTextManagable;
 	protected Sprite messageFrame;
+	protected StringManger stringManger;
 
 	@Override
 	protected void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
-		BitmapTextureAtlas progressAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (461), (int) (45),
+		BitmapTextureAtlas mBgBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 640, 960,
 				TextureOptions.BILINEAR);
-		progressRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(progressAtlas, this, "bg_progress.png",
-						0, 0, 1, 1);
-		progressAtlas.load();
-
-		BitmapTextureAtlas starAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (74), (int) (93),
-				TextureOptions.BILINEAR);
-		starRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(starAtlas, this, "star.png", 0, 0, 1, 1);
-		starAtlas.load();
+		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBgBitmapTextureAtlas, this,
+				"bg5.jpg", 0, 0); // 64x32
+		mBgBitmapTextureAtlas.load();
 
 		Random random = new Random(System.currentTimeMillis());
 
-		BitmapTextureAtlas childAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (187), (int) (279),
+		BitmapTextureAtlas childAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (187), (int) (279),
 				TextureOptions.BILINEAR);
-		childFaceRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(childAtlas, this,
-						childFaces[random.nextInt(2)], 0, 0, 1, 1);
+		childFaceRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(childAtlas, this,
+				childFaces[random.nextInt(2)], 0, 0, 1, 1);
 		childAtlas.load();
 
-		BitmapTextureAtlas messageAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), (int) (431), (int) (167),
+		marginTextMath = marginTextMath * ratio;
+	}
+
+	private void loadResource() {
+		BitmapTextureAtlas progressAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (461), (int) (45),
 				TextureOptions.BILINEAR);
-		messageRegion = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(messageAtlas, this, "message_frame.png",
-						0, 0, 1, 1);
+		progressRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(progressAtlas, this,
+				"bg_progress.png", 0, 0, 1, 1);
+		progressAtlas.load();
+
+		BitmapTextureAtlas starAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (74), (int) (93),
+				TextureOptions.BILINEAR);
+		starRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(starAtlas, this, "star.png", 0, 0, 1,
+				1);
+		starAtlas.load();
+
+		BitmapTextureAtlas messageAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (431), (int) (167),
+				TextureOptions.BILINEAR);
+		messageRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(messageAtlas, this,
+				"message_frame.png", 0, 0, 1, 1);
 		messageAtlas.load();
 
-		BitmapTextureAtlas mBgBitmapTextureAtlas = new BitmapTextureAtlas(
-				this.getTextureManager(), 640, 960, TextureOptions.BILINEAR);
-		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory
-				.createFromAsset(mBgBitmapTextureAtlas, this, "bg5.jpg", 0, 0); // 64x32
-		mBgBitmapTextureAtlas.load();
-
-		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(),
-				512, 512, TextureOptions.BILINEAR);
+		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		customFont = FontFactory.createStrokeFromAsset(getFontManager(),
-				customFontTexture, getAssets(), "MTCORSVA.ttf", (float) 80
-						* ratio, true, Color.WHITE, 3, Color.GREEN);
+		customFont = FontFactory.createStrokeFromAsset(getFontManager(), customFontTexture, getAssets(),
+				"MTCORSVA.ttf", (float) 80 * ratio, true, Color.WHITE, 3, Color.GREEN);
 		customFont.load();
 
-		customFontBigTexture = new BitmapTextureAtlas(this.getTextureManager(),
-				1024, 1024, TextureOptions.BILINEAR);
+		customFontBigTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		customFontBig = FontFactory.createStrokeFromAsset(getFontManager(),
-				customFontBigTexture, getAssets(), "MTCORSVA.ttf", (float) 200
-						* ratio, true, Color.WHITE, 3, Color.RED);
+		customFontBig = FontFactory.createStrokeFromAsset(getFontManager(), customFontBigTexture, getAssets(),
+				"MTCORSVA.ttf", (float) 200 * ratio, true, Color.WHITE, 3, Color.RED);
 		customFontBig.load();
 
-		this.mFont = FontFactory.create(this.getFontManager(),
-				this.getTextureManager(), (int) (256 * ratio),
-				(int) (256 * ratio),
-				Typeface.create(Typeface.DEFAULT, Typeface.BOLD),
-				(int) (32 * ratio));
+		this.mFont = FontFactory.create(this.getFontManager(), this.getTextureManager(), (int) (256 * ratio),
+				(int) (256 * ratio), Typeface.create(Typeface.DEFAULT, Typeface.BOLD), (int) (32 * ratio));
 		this.mFont.load();
 
 		onLoadResource();
-
-		marginTextMath = marginTextMath * ratio;
 	}
 
 	@Override
 	protected Scene onCreateScene() {
 		scene = new Scene();
-		scene.setBackground(new SpriteBackground(
-				new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
-						getVertexBufferObjectManager())));
+		scene.setBackground(new SpriteBackground(new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
+				getVertexBufferObjectManager())));
 		this.mEngine.registerUpdateHandler(new FPSLogger());
+		SharedPreferences pref = getSharedPreferences(Config.KEY_PREF, 0);
+		if (Config.getLanguage(pref) == Config.KEY_LANGUAGE_NOTSET) {
+			if (Locale.getDefault().getDisplayLanguage().equalsIgnoreCase("VNI")) {
+				Config.setLanguage(pref, Config.KEY_LANGUAGE_VNI);
+			} else {
+				Config.setLanguage(pref, Config.KEY_LANGUAGE_ENG);
+			}
+		}
+		
+		stringManger = new StringManger(this, Config.getLanguage(pref));
+		mEngine.registerUpdateHandler(new TimerHandler(1, new ITimerCallback() {
 
-		mSeekBar = new SeekBar(this, 0, 50 * ratio, progressRegion.getWidth()
-				* ratio, progressRegion.getHeight() * ratio, progressRegion,
-				9f * ratio, org.andengine.util.color.Color.GREEN, starRegion,
-				ratio, getVertexBufferObjectManager());
+			@Override
+			public void onTimePassed(TimerHandler pTimerHandler) {
+				loadResource();
+				createScene();
+			}
+		}));
+
+		return scene;
+	}
+
+	private void createScene() {
+		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this, mCamera, ratio);
+		mMenu.init();
+		mMenu.setOnMenuItemClickListener(this);
+		scene.setChildScene(mMenu);
+
+		child = new Sprite(0, mMenu.getMenuPositionY() - childFaceRegion.getHeight() * ratio,
+				childFaceRegion.getWidth() * ratio, childFaceRegion.getHeight() * ratio, childFaceRegion,
+				getVertexBufferObjectManager());
+
+		scene.attachChild(child);
+
+		mSeekBar = new SeekBar(this, 0, 50 * ratio, progressRegion.getWidth() * ratio, progressRegion.getHeight()
+				* ratio, progressRegion, 9f * ratio, org.andengine.util.color.Color.GREEN, starRegion, ratio,
+				getVertexBufferObjectManager());
 		mSeekBar.setX(CAMERA_WIDTH / 2 - mSeekBar.getWidth() / 2);
 		// mSeekBar.setPercent(50);
 		scene.attachChild(mSeekBar);
 		mSeekBar.setSeekBarListenner(this);
 
-		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this,
-				mCamera, ratio);
-		mMenu.init();
-		mMenu.setOnMenuItemClickListener(this);
-		scene.setChildScene(mMenu);
-
-		child = new Sprite(0, mMenu.getMenuPositionY()
-				- childFaceRegion.getHeight() * ratio,
-				childFaceRegion.getWidth() * ratio, childFaceRegion.getHeight()
-						* ratio, childFaceRegion,
-				getVertexBufferObjectManager());
-
-		messageFrame = new Sprite(child.getX() + child.getWidth() + 12
-				* ratio, mMenu.getMenuPositionY() - messageRegion.getHeight()
-				* ratio, messageRegion.getWidth() * ratio,
-				messageRegion.getHeight() * ratio, messageRegion,
-				getVertexBufferObjectManager());
+		messageFrame = new Sprite(child.getX() + child.getWidth() + 12 * ratio, mMenu.getMenuPositionY()
+				- messageRegion.getHeight() * ratio, messageRegion.getWidth() * ratio, messageRegion.getHeight()
+				* ratio, messageRegion, getVertexBufferObjectManager());
 		scene.attachChild(messageFrame);
 
-		tickTextManagable = new TickerTextManagable(
-				10 * ratio, 10 * ratio, mFont,
-				"",100,
-				new TickerTextOptions(AutoWrap.WORDS, messageFrame.getWidth()
-						- 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
+		tickTextManagable = new TickerTextManagable(10 * ratio, 10 * ratio, mFont, "", 100, new TickerTextOptions(
+				AutoWrap.WORDS, messageFrame.getWidth() - 2 * 10 * ratio, HorizontalAlign.CENTER, 15),
 				getVertexBufferObjectManager());
 		tickTextManagable.setTickerTextListenner(this);
 		messageFrame.attachChild(tickTextManagable);
-		
-		scene.attachChild(child);
-
 		initMathGraphicFrame();
-
-		return scene;
 	}
 
 	protected abstract void initMathGraphicFrame();
 
 	protected abstract void onLoadResource();
+	
+	protected abstract void lockUserAction(boolean enable);
 
 	@Override
 	public boolean onMenuItemClicked(HUD pMenuScene, final IMenuItem pMenuItem) {
@@ -202,9 +204,8 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity
 
 			@Override
 			public void run() {
-				Toast.makeText(BubbleGameActivity.this,
-						"onMenuItemClicked " + pMenuItem.getID(),
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(BubbleGameActivity.this, "onMenuItemClicked " + pMenuItem.getID(), Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 
