@@ -55,9 +55,9 @@ public class FindModeActivty extends BubbleGameActivity {
 		Log.d(tag,
 				tag + " onTickerTextComplete " + tickTextManagable.getText()
 						+ (!tickTextManagable.getText().equals("")));
-		if(!endgame)
-		if (!tickTextManagable.getText().equals(""))
-			start();
+		if (!endgame)
+			if (!tickTextManagable.getText().equals(""))
+				start();
 	}
 
 	@Override
@@ -396,6 +396,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 					@Override
 					public void onCLick(IAreaShape view) {
+						playCLick();
 						clearStateAnswerList();
 						lockUserAction(false);
 						final Item item = (Item) view;
@@ -498,7 +499,7 @@ public class FindModeActivty extends BubbleGameActivity {
 	protected void lockUserAction(boolean enable) {
 		if (mAnswerSpriteList != null) {
 			for (Item item : mAnswerSpriteList) {
-				item.setEnabled(enable);
+				item.setEnable(enable);
 			}
 		}
 	}
@@ -506,14 +507,16 @@ public class FindModeActivty extends BubbleGameActivity {
 	@Override
 	protected void onCloseEndGame() {
 		for (Item item : mAnswerSpriteList) {
-			item.setEnabled(true);
+			item.setEnable(true);
 			item.setVisible(true);
 		}
 		for (Item item : mGraphicObjects) {
-			item.setEnabled(true);
+			item.setEnable(true);
 			item.setVisible(true);
 		}
-		if(!endgame){
+		mGame.reset();
+		mSeekBar.setPercent(mGame.getProcessPercent(), true);
+		if (!endgame) {
 			start();
 		}
 	}
@@ -521,13 +524,19 @@ public class FindModeActivty extends BubbleGameActivity {
 	@Override
 	protected void onEndGame() {
 		for (Item item : mAnswerSpriteList) {
-			item.setEnabled(false);
+			item.setEnable(false);
 			item.setVisible(false);
 		}
-		for (Item item : mGraphicObjects) {
-			item.setEnabled(false);
-			item.setVisible(false);
-		}
+		runOnUpdateThread(new Runnable() {
+
+			@Override
+			public void run() {
+				for (Item item : mGraphicObjects) {
+					scene.detachChild(item);
+				}
+				mGraphicObjects.clear();
+			}
+		});
 	}
 
 }

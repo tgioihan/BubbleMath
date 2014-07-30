@@ -433,6 +433,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 					@Override
 					public void onCLick(IAreaShape view) {
+						playCLick();
 						lockUserAction(false);
 						clearStateAnswerList();
 						final Item item = (Item) view;
@@ -503,7 +504,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	protected void lockUserAction(boolean enable) {
 		if (mAnswerSpriteList != null) {
 			for (Item item : mAnswerSpriteList) {
-				item.setEnabled(enable);
+				item.setEnable(enable);
 			}
 		}
 	}
@@ -511,13 +512,15 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	@Override
 	protected void onCloseEndGame() {
 		for (Item item : mAnswerSpriteList) {
-			item.setEnabled(true);
+			item.setEnable(true);
 			item.setVisible(true);
 		}
 		for (SpriteWithValue item : mGraphicObjects) {
-			item.setEnabled(true);
+			item.setEnable(true);
 			item.setVisible(true);
 		}
+		mGame.reset();
+		mSeekBar.setPercent(mGame.getProcessPercent(), true);
 		if (!endgame) {
 			start();
 		}
@@ -526,12 +529,18 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 	@Override
 	protected void onEndGame() {
 		for (Item item : mAnswerSpriteList) {
-			item.setEnabled(false);
+			item.setEnable(false);
 			item.setVisible(false);
 		}
-		for (SpriteWithValue item : mGraphicObjects) {
-			item.setEnabled(false);
-			item.setVisible(false);
-		}
+		runOnUpdateThread(new Runnable() {
+
+			@Override
+			public void run() {
+				for (SpriteWithValue item : mGraphicObjects) {
+					scene.detachChild(item);
+				}
+				mGraphicObjects.clear();
+			}
+		});
 	}
 }

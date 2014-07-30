@@ -1,8 +1,13 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -32,7 +37,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
 import com.bestfunforever.andengine.uikit.entity.IClick;
@@ -42,12 +46,14 @@ import com.bestfunforever.andengine.uikit.entity.Sprite.SeekBar.ISeekBarListenne
 import com.bestfunforever.andengine.uikit.entity.text.TickerTextExtension.TickerTextOptions;
 import com.bestfunforever.andengine.uikit.entity.text.TickerTextManagable;
 import com.bestfunforever.andengine.uikit.entity.text.TickerTextManagable.ITickerTextListenner;
+import com.bestfunforever.andengine.uikit.menu.BaseMenu.IMenuListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
+import com.bestfunforever.andengine.uikit.menu.CheckboxMenuItem;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MathExpanableMenu;
 
 public abstract class BubbleGameActivity extends PortraitAdmobGameActivity implements IOnMenuItemClickListener,
-		ITickerTextListenner, ISeekBarListenner {
+		ITickerTextListenner, ISeekBarListenner, IMenuListenner {
 
 	protected TiledTextureRegion childFaceRegion;
 	protected TextureRegion mBgTextureRegion;
@@ -86,6 +92,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 	protected float durationEndGame = 0.5f;
 	private String tag;
+	private SharedPreferences pref;
 
 	@Override
 	protected void onCreateResources() {
@@ -163,7 +170,26 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 				(int) (40 * ratio), true, Color.BLACK);
 		mFont.load();
 
+		loadSound();
+		loadMusic();
+
 		onLoadResource();
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (music != null && music.isPlaying()) {
+			music.pause();
+		}
+	}
+
+	@Override
+	public synchronized void onResumeGame() {
+		// TODO Auto-generated method stub
+		super.onResumeGame();
+		playMusic();
 	}
 
 	@Override
@@ -172,7 +198,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 		scene.setBackground(new SpriteBackground(new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
 				getVertexBufferObjectManager())));
 		this.mEngine.registerUpdateHandler(new FPSLogger());
-		SharedPreferences pref = getSharedPreferences(Config.KEY_PREF, 0);
+		pref = getSharedPreferences(Config.KEY_PREF, 0);
 		if (Config.getLanguage(pref) == Config.KEY_LANGUAGE_NOTSET) {
 			if (Locale.getDefault().getDisplayLanguage().equalsIgnoreCase("VNI")) {
 				Config.setLanguage(pref, Config.KEY_LANGUAGE_VNI);
@@ -181,7 +207,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 			}
 		}
 
-		stringManger = new StringManger(this, Config.getLanguage(pref));
+		stringManger = new StringManger(this);
 		mEngine.registerUpdateHandler(new TimerHandler(1, new ITimerCallback() {
 
 			@Override
@@ -198,6 +224,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 		mMenu = new MathExpanableMenu(10, CAMERA_HEIGHT - 110 * ratio, this, mCamera, ratio);
 		mMenu.init();
 		mMenu.setOnMenuItemClickListener(this);
+		mMenu.setMenuListenner(this);
 		scene.setChildScene(mMenu);
 
 		child = new Sprite(0, mMenu.getMenuPositionY() - childFaceRegion.getHeight() * ratio,
@@ -241,7 +268,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
 				float center = CAMERA_HEIGHT / 2;
 				messageFrame.setY(center - messageFrame.getHeight() / 2);
-				child.setY(mMenu.getMenuPositionY() - childFaceRegion.getHeight() * ratio);
+				child.setY(messageFrame.getY() + messageFrame.getHeight() - child.getHeight());
 				child.registerEntityModifier(new AlphaModifier(durationEndGame, 0, 1));
 				messageFrame.registerEntityModifier(new AlphaModifier(durationEndGame, 0, 1,
 						new IEntityModifierListener() {
@@ -282,11 +309,13 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 	private void createObjectEndGameIfNeed() {
 		if (fbSprite == null) {
 			float pY = messageFrame.getY() + messageFrame.getHeight();
-			fbSprite = new BubbleSprite(paddingEndGame * ratio+messageFrame.getX(), pY, ratio, fbRegion, getVertexBufferObjectManager());
-			replaySprite = new BubbleSprite(0, pY, ratio, replayRegion, getVertexBufferObjectManager());
-			replaySprite.setX(messageFrame.getWidth() / 2 - replaySprite.getWidth() / 2+messageFrame.getX());
-			backSprite = new BubbleSprite(messageFrame.getWidth() - paddingEndGame * ratio+messageFrame.getX(), pY, ratio, backRegion,
+			fbSprite = new BubbleSprite(paddingEndGame * ratio + messageFrame.getX(), pY, ratio, fbRegion,
 					getVertexBufferObjectManager());
+			replaySprite = new BubbleSprite(0, pY, ratio, replayRegion, getVertexBufferObjectManager());
+			replaySprite.setX(messageFrame.getWidth() / 2 - replaySprite.getWidth() / 2 + messageFrame.getX());
+			backSprite = new BubbleSprite(0, pY, ratio, backRegion, getVertexBufferObjectManager());
+			backSprite.setX(messageFrame.getWidth() - paddingEndGame * ratio + messageFrame.getX()
+					- backSprite.getWidth());
 			fbSprite.setClickListenner(new IClick() {
 
 				@Override
@@ -315,16 +344,19 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 		scene.registerTouchArea(fbSprite);
 		scene.registerTouchArea(replaySprite);
 		scene.registerTouchArea(backSprite);
+		fbSprite.setAlpha(1);
+		replaySprite.setAlpha(1);
+		backSprite.setAlpha(1);
 		fbSprite.registerEntityModifier(new ScaleModifier(durationEndGame, 0, 1));
 		replaySprite.registerEntityModifier(new ScaleModifier(durationEndGame, 0, 1));
 		backSprite.registerEntityModifier(new ScaleModifier(durationEndGame, 0, 1));
-		
+
 	}
 
 	public void closeEndGame() {
-		fbSprite.registerEntityModifier(new ScaleModifier(durationEndGame, 1, 0));
-		replaySprite.registerEntityModifier(new ScaleModifier(durationEndGame, 1, 0));
-		backSprite.registerEntityModifier(new ScaleModifier(durationEndGame, 1, 0));
+		fbSprite.registerEntityModifier(new AlphaModifier(durationEndGame, 1, 0));
+		replaySprite.registerEntityModifier(new AlphaModifier(durationEndGame, 1, 0));
+		backSprite.registerEntityModifier(new AlphaModifier(durationEndGame, 1, 0));
 		child.registerEntityModifier(new AlphaModifier(durationEndGame, 1, 0));
 		scene.unregisterTouchArea(fbSprite);
 		scene.unregisterTouchArea(replaySprite);
@@ -338,9 +370,8 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 			@Override
 			public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+				messageFrame.setY(mMenu.getMenuPositionY() - messageRegion.getHeight() * ratio);
 				child.setY(messageFrame.getY() + messageFrame.getHeight() - child.getHeight());
-				messageFrame.setY(mMenu.getMenuPositionY()
-						- messageRegion.getHeight() * ratio);
 				child.registerEntityModifier(new AlphaModifier(durationEndGame, 0, 1));
 				messageFrame.registerEntityModifier(new AlphaModifier(durationEndGame, 0, 1,
 						new IEntityModifierListener() {
@@ -381,16 +412,95 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 	@Override
 	public boolean onMenuItemClicked(HUD pMenuScene, final IMenuItem pMenuItem) {
-		runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				Toast.makeText(BubbleGameActivity.this, "onMenuItemClicked " + pMenuItem.getID(), Toast.LENGTH_SHORT)
-						.show();
+		int id = pMenuItem.getId();
+		playCLick();
+		switch (id) {
+		case MathExpanableMenu.MENU_SOUND:
+			playCLick();
+			((CheckboxMenuItem) pMenuItem).setChecked(!((CheckboxMenuItem) pMenuItem).isChecked());
+			boolean checkedSound = ((CheckboxMenuItem) pMenuItem).isChecked();
+			Config.setSoundState(pref, checkedSound ? Config.KEY_ON : Config.KEY_OFF);
+			break;
+		case MathExpanableMenu.MENU_MUSIC:
+			playCLick();
+			((CheckboxMenuItem) pMenuItem).setChecked(!((CheckboxMenuItem) pMenuItem).isChecked());
+			boolean checkedMusic = ((CheckboxMenuItem) pMenuItem).isChecked();
+			Config.setMusicState(pref, checkedMusic ? Config.KEY_ON : Config.KEY_OFF);
+			if (checkedMusic) {
+				if (music != null && !music.isPlaying()) {
+					playMusic();
+				}
+			} else {
+				if (music != null && music.isPlaying()) {
+					music.pause();
+				}
 			}
-		});
+			break;
+
+		case MathExpanableMenu.MENU_BACK:
+			finish();
+			break;
+		default:
+			break;
+		}
 
 		return false;
+	}
+
+	private Sound clickSound;
+	private Music music;
+
+	protected void loadSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			clickSound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"button_click.mp3");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void playCLick() {
+		if (clickSound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			clickSound.play();
+		} else if (clickSound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadSound();
+			clickSound.play();
+		}
+	}
+
+	protected void loadMusic() {
+		MusicFactory.setAssetBasePath("sound/");
+		try {
+			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(),
+					"dora_and_dreamland_forever.mp3");
+			music.setLooping(true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	protected void playMusic() {
+		// TODO Auto-generated method stub
+		if (Config.getMusicState(pref) == Config.KEY_ON) {
+			if (music == null) {
+				loadMusic();
+				music.play();
+			} else {
+				music.play();
+			}
+		}
+	}
+
+	@Override
+	public void onShow() {
+		playCLick();
+	}
+
+	@Override
+	public void onHide() {
+		playCLick();
 	}
 
 }

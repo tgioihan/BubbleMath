@@ -26,13 +26,15 @@ public class MenuRectang extends ClipingRectangle implements IMenuRectangle {
 	private TextExtension mSetting;
 	private TextExtension mMore;
 	private float margin = 00;
+	private StringManger stringManger;
 
 	public MenuRectang(SimpleBaseGameActivity context,StringManger stringManger, float pX, float pY, float pWidth, float pHeight, float ratio,
 			Font font, VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 		setColor(Color.TRANSPARENT);
+		this.stringManger = stringManger;
 		
-		mStart = new TextExtension(0, 0, font, stringManger.getStringFromKey(StringManger.START), 10, new TextOptions(AutoWrap.WORDS, pWidth,
+		mStart = new TextExtension(0, 0, font, stringManger.getStringFromKey(StringManger.START), 20, new TextOptions(AutoWrap.WORDS, pWidth,
 				HorizontalAlign.CENTER), pVertexBufferObjectManager);
 		mSetting = new TextExtension(0, mStart.getHeight() + margin * ratio, font, stringManger.getStringFromKey(StringManger.SETTING), 10, new TextOptions(
 				AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
@@ -64,6 +66,10 @@ public class MenuRectang extends ClipingRectangle implements IMenuRectangle {
 	}
 
 	public void show(IEntityModifierListener listenner) {
+		mStart.setText( stringManger.getStringFromKey(StringManger.START));
+		mSetting.setText( stringManger.getStringFromKey(StringManger.SETTING));
+		mMore.setText( stringManger.getStringFromKey(StringManger.MORE));
+		
 		mStart.registerEntityModifier(new ParallelEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, mStart
 				.getX(), 0, EaseBounceOut.getInstance()), new AlphaModifier(Config.ANIMATE_DURATION, 0, 1)));
 		mSetting.registerEntityModifier(new ParallelEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION, mSetting
@@ -110,9 +116,9 @@ public class MenuRectang extends ClipingRectangle implements IMenuRectangle {
 
 	@Override
 	public void lockUserAction(boolean enable) {
-		mStart.setEnabled(enable);
-		mSetting.setEnabled(enable);
-		mMore.setEnabled(enable);
+		mStart.setEnable(enable);
+		mSetting.setEnable(enable);
+		mMore.setEnable(enable);
 	}
 
 }

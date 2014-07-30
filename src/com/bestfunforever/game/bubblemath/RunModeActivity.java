@@ -2,7 +2,6 @@ package com.bestfunforever.game.bubblemath;
 
 import java.util.Random;
 
-import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.modifier.MoveXModifier;
@@ -19,14 +18,11 @@ import org.andengine.util.modifier.ease.EaseBounceIn;
 import org.andengine.util.modifier.ease.EaseBounceOut;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite.State;
+import com.bestfunforever.andengine.uikit.entity.State;
 import com.bestfunforever.andengine.uikit.listview.OnItemClickListenner;
 import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener;
-import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.Item;
-import com.bestfunforever.game.bubblemath.Entity.SpriteWithValue;
 import com.bestfunforever.game.bubblemath.Util.RunModeGame;
 
 public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemClickListener {
@@ -88,6 +84,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 			@Override
 			public void onClick(IAreaShape view, int position) {
+				playCLick();
 				lockUserAction(false);
 				((Item) view).setState(State.SELECTED);
 				checkAnswer(((Item) view).getValue());
@@ -335,20 +332,6 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 	}
 
 	@Override
-	public boolean onMenuItemClicked(HUD pMenuScene, final IMenuItem pMenuItem) {
-		runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				Toast.makeText(RunModeActivity.this, "onMenuItemClicked " + pMenuItem.getID(), Toast.LENGTH_SHORT)
-						.show();
-			}
-		});
-
-		return false;
-	}
-
-	@Override
 	protected void lockUserAction(boolean enable) {
 		mListView.setEnable(enable);
 	}
@@ -363,6 +346,8 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		mListView.setVisible(true);
 		mListView.setEnable(true);
 		mListView.setRun(true);
+		mGame.reset();
+		mSeekBar.setPercent(mGame.getProcessPercent(), true);
 		if(!endgame){
 			start();
 		}

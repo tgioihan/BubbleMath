@@ -1,7 +1,12 @@
 package com.bestfunforever.game.bubblemath;
 
+import java.io.IOException;
 import java.util.Locale;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
 import org.andengine.entity.scene.Scene;
@@ -11,7 +16,6 @@ import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
-import org.andengine.opengl.font.StrokeFont;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -22,10 +26,10 @@ import org.andengine.util.modifier.IModifier;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
+import com.bestfunforever.andengine.uikit.entity.ICheckedChange;
 import com.bestfunforever.andengine.uikit.entity.IClick;
 import com.bestfunforever.andengine.uikit.entity.ISelector;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.IMenuRectangle;
@@ -35,6 +39,7 @@ import com.bestfunforever.game.bubblemath.Entity.MainMenu.MenuSettingGameRectang
 
 public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
+	protected static final String tag = "MainActivity";
 	private BitmapTextureAtlas customFontTexture;
 	private Font customFont;
 	private TextureRegion mBgTextureRegion;
@@ -49,6 +54,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	private MenuSettingGameRectangle settingGame;
 	private TextureRegion mBackRegion;
 	private StringManger stringManger;
+	private SharedPreferences pref;
 
 	public void lockUserAction(boolean enable) {
 		if (menu != null) {
@@ -67,7 +73,8 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		FontFactory.setAssetBasePath("font/");
 		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
-		customFont = FontFactory.createFromAsset(getFontManager(), customFontTexture, getAssets(), "UVF_AguafinaScript.ttf", (float) 100 * ratio, true, Color.RED);
+		customFont = FontFactory.createFromAsset(getFontManager(), customFontTexture, getAssets(),
+				"UVF_AguafinaScript.ttf", (float) 100 * ratio, true, Color.RED);
 		customFont.load();
 
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -90,6 +97,9 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		this.mMusicTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
 				this.mMusicBitmapTextureAtlas, this, "music.png", 0, 0, 2, 1); // 64x32
 		this.mMusicBitmapTextureAtlas.load();
+
+		loadSound();
+		loadMusic();
 	}
 
 	@Override
@@ -98,8 +108,8 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		mScene.setBackground(new SpriteBackground(new Sprite(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, mBgTextureRegion,
 				getVertexBufferObjectManager())));
 		this.mEngine.registerUpdateHandler(new FPSLogger());
-		SharedPreferences pref = getSharedPreferences(Config.KEY_PREF, 0);
-		Log.d("", "language "+Locale.getDefault().getDisplayLanguage() );
+		pref = getSharedPreferences(Config.KEY_PREF, 0);
+		Log.d("", "language " + Locale.getDefault().getDisplayLanguage());
 		if (Config.getLanguage(pref) == Config.KEY_LANGUAGE_NOTSET) {
 			if (Locale.getDefault().getDisplayLanguage().equalsIgnoreCase("VNI")) {
 				Config.setLanguage(pref, Config.KEY_LANGUAGE_VNI);
@@ -107,10 +117,19 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 				Config.setLanguage(pref, Config.KEY_LANGUAGE_ENG);
 			}
 		}
-		
-		stringManger = new StringManger(this, Config.getLanguage(pref));
+
+		stringManger = new StringManger(this);
 
 		return mScene;
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (music != null && music.isPlaying()) {
+			music.pause();
+		}
 	}
 
 	@Override
@@ -125,13 +144,14 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	public synchronized void onResumeGame() {
 		// TODO Auto-generated method stub
 		super.onResumeGame();
+		playMusic();
 		clearLastMenuAndCreateFirstMenu();
 	}
 
 	private void createAndShowMenuIfNeed() {
 		if (menu == null) {
-			menu = new MenuRectang(this, stringManger, 218 * ratio, 300 * ratio, 424 * ratio, 450 * ratio, ratio, customFont,
-					getVertexBufferObjectManager());
+			menu = new MenuRectang(this, stringManger, 218 * ratio, 300 * ratio, 424 * ratio, 450 * ratio, ratio,
+					customFont, getVertexBufferObjectManager());
 		}
 
 		menu.attachToScene(mScene);
@@ -154,6 +174,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	@Override
 	public void onCLick(IAreaShape view) {
 		int id = ((ISelector) view).getId();
+		playCLick();
 		switch (id) {
 		case Config.MENU__START:
 			lockUserAction(false);
@@ -301,8 +322,8 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowChooseModeIfNeed() {
 		if (modeGame == null) {
-			modeGame = new MenuModeGameRectang(this,stringManger,218 * ratio, 300 * ratio, 424 * ratio, 600 * ratio, ratio, customFont,
-					mBackRegion, getVertexBufferObjectManager());
+			modeGame = new MenuModeGameRectang(this, stringManger, 218 * ratio, 300 * ratio, 424 * ratio, 600 * ratio,
+					ratio, customFont, mBackRegion, getVertexBufferObjectManager());
 		}
 		modeGame.attachToScene(mScene);
 		modeGame.setClickListenner(this);
@@ -362,8 +383,12 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowSettingsMenuIfNeed() {
 		if (settingGame == null) {
-			settingGame = new MenuSettingGameRectangle(stringManger,218 * ratio, 300 * ratio, 424 * ratio, 600 * ratio, ratio,
-					customFont, mSoundTextureRegion, mMusicTextureRegion, mBackRegion, getVertexBufferObjectManager());
+			settingGame = new MenuSettingGameRectangle(this,pref, stringManger, 218 * ratio, 300 * ratio, 424 * ratio,
+					600 * ratio, ratio, customFont, mSoundTextureRegion, mMusicTextureRegion, mBackRegion,
+					getVertexBufferObjectManager());
+			settingGame.setSoundCheckedChange(soundCheckedChange);
+			settingGame.setMusicCheckedChange(musicCheckedChange);
+			settingGame.setLanguageClick(languageCheckedChange);
 		}
 		settingGame.attachToScene(mScene);
 		settingGame.setClickListenner(this);
@@ -381,5 +406,116 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		});
 		mCurrentMenuRectangle = settingGame;
 	}
+	
+	private IClick languageCheckedChange = new IClick() {
 
+		@Override
+		public void onCLick(IAreaShape view) {
+			playCLick();
+			changeLanguage();
+		}
+	};
+
+	private ICheckedChange soundCheckedChange = new ICheckedChange() {
+
+		@Override
+		public void onCheckedChange(boolean checked) {
+			Log.d(tag, tag + " sound change " + checked);
+			playCLick();
+			Config.setSoundState(pref, checked ? Config.KEY_ON : Config.KEY_OFF);
+		}
+	};
+
+	private ICheckedChange musicCheckedChange = new ICheckedChange() {
+
+		@Override
+		public void onCheckedChange(boolean checked) {
+			Log.d(tag, tag + " music change " + checked);
+			playCLick();
+			Config.setMusicState(pref, checked ? Config.KEY_ON : Config.KEY_OFF);
+			if (checked) {
+				if (music != null && !music.isPlaying()) {
+					playMusic();
+				}
+			} else {
+				if (music != null && music.isPlaying()) {
+					music.pause();
+				}
+			}
+		}
+	};
+	private Sound clickSound;
+	private Music music;
+
+	private void loadSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			clickSound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"button_click.mp3");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void changeLanguage() {
+		if(settingGame!=null){
+			lockUserAction(true);
+			settingGame.hide(new IEntityModifierListener() {
+				
+				@Override
+				public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+					
+				}
+				
+				@Override
+				public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+					settingGame.show(new IEntityModifierListener() {
+						
+						@Override
+						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+							
+						}
+						
+						@Override
+						public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+							lockUserAction(true);
+						}
+					});
+				}
+			});
+		}
+	}
+
+	private void playCLick() {
+		if (clickSound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			clickSound.play();
+		} else if (clickSound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadSound();
+			clickSound.play();
+		}
+	}
+
+	private void loadMusic() {
+		MusicFactory.setAssetBasePath("sound/");
+		try {
+			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(),
+					"dora_and_dreamland_forever.mp3");
+			music.setLooping(true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void playMusic() {
+		// TODO Auto-generated method stub
+		if (Config.getMusicState(pref) == Config.KEY_ON) {
+			if (music == null) {
+				loadMusic();
+				music.play();
+			} else {
+				music.play();
+			}
+		}
+	}
 }

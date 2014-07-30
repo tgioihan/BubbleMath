@@ -34,12 +34,14 @@ public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectan
 	private TextExtension mRunMode;
 	private float margin = 0;
 	private BubbleSprite bubbleSprite;
+	private StringManger stringManger;
 
 	public MenuModeGameRectang(SimpleBaseGameActivity context, StringManger stringManger, float pX, float pY,
 			float pWidth, float pHeight, float ratio, Font font, TextureRegion mBackRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
 		super(pX, pY, pWidth, pHeight, pVertexBufferObjectManager);
 		setColor(Color.TRANSPARENT);
+		this.stringManger = stringManger;
 		mFruitMode = new TextExtension(0, 0, font, stringManger.getStringFromKey(StringManger.FRUIT), 10,
 				new TextOptions(AutoWrap.WORDS, pWidth, HorizontalAlign.CENTER), pVertexBufferObjectManager);
 		mFindMode = new TextExtension(0, mFruitMode.getY() + mFruitMode.getHeight() + margin * ratio, font,
@@ -79,6 +81,10 @@ public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectan
 	}
 
 	public void show(IEntityModifierListener listenner) {
+		mFruitMode.setText(stringManger.getStringFromKey(StringManger.FRUIT));
+		mRunMode.setText(stringManger.getStringFromKey(StringManger.RUN));
+		mFindMode.setText(stringManger.getStringFromKey(StringManger.FINDMODE));
+		
 		mFruitMode.registerEntityModifier(new ParallelEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
 				mFruitMode.getX(), 0, EaseBounceOut.getInstance()), new AlphaModifier(Config.ANIMATE_DURATION, 0, 1)));
 		mFindMode.registerEntityModifier(new ParallelEntityModifier(new MoveXModifier(Config.ANIMATE_DURATION,
@@ -128,10 +134,10 @@ public class MenuModeGameRectang extends ClipingRectangle implements IMenuRectan
 
 	@Override
 	public void lockUserAction(boolean enable) {
-		mFruitMode.setEnabled(enable);
-		mFindMode.setEnabled(enable);
-		mRunMode.setEnabled(enable);
-		bubbleSprite.setEnabled(enable);
+		mFruitMode.setEnable(enable);
+		mFindMode.setEnable(enable);
+		mRunMode.setEnable(enable);
+		bubbleSprite.setEnable(enable);
 	}
 
 }

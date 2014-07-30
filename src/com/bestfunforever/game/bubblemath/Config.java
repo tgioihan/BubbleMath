@@ -32,9 +32,9 @@ public class Config {
 	public static final int KEY_OFF = 1;
 	public static final String KEY_MUSIC = "MUSIC";
 	public static final String KEY_LANGUAGE = "LANGUAGE";
-	public static final int KEY_LANGUAGE_NOTSET = -1;
-	public static final int KEY_LANGUAGE_ENG = 0;
-	public static final int KEY_LANGUAGE_VNI = 1;
+	public static final int KEY_LANGUAGE_NOTSET = 0;
+	public static final int KEY_LANGUAGE_ENG = 1;
+	public static final int KEY_LANGUAGE_VNI = 0;
 
 	public static int getMax(SharedPreferences preferences) {
 		return preferences.getInt(KEY_MAX, 10);
@@ -56,7 +56,7 @@ public class Config {
 		return preferences.getInt(KEY_MUSIC, KEY_ON);
 	}
 
-	public static void setsoundState(SharedPreferences preferences, int musicState) {
+	public static void setMusicState(SharedPreferences preferences, int musicState) {
 		preferences.edit().putInt(KEY_MUSIC, musicState).commit();
 	}
 

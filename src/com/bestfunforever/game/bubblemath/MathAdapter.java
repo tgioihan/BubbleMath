@@ -9,7 +9,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import android.util.Log;
 
-import com.bestfunforever.andengine.uikit.entity.Sprite.BaseSprite.State;
+import com.bestfunforever.andengine.uikit.entity.State;
 import com.bestfunforever.andengine.uikit.listview.SimpleAdapter;
 import com.bestfunforever.game.bubblemath.Entity.Item;
 

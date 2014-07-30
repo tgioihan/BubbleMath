@@ -1,11 +1,11 @@
 package com.bestfunforever.game.bubblemath;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 public class StringManger {
 
 	private Context context;
-	private int languageId;
 
 	public static final int START = 0;
 	public static final int SETTING = 1;
@@ -27,14 +27,17 @@ public class StringManger {
 	public static final int FRUIT_MSG = 15;
 	public static final int FINDMODE_MSG = 16;
 	public static final int RUN_MSG = 17;
+	
+	SharedPreferences pref ;
 
-	public StringManger(Context context, int languageId) {
+	public StringManger(Context context) {
 		super();
 		this.context = context;
-		this.languageId = languageId;
+		pref = context.getSharedPreferences(Config.KEY_PREF, 0);
 	}
 
 	public String getStringFromKey(int key) {
+		int languageId = Config.getLanguage(pref);
 		if (languageId == Config.KEY_LANGUAGE_ENG) {
 			return getStringENGFromKey(key);
 		} else {
