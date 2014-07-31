@@ -575,7 +575,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	protected void shareFb() {
 		shareFacebookWithLogin(getString(R.string.app_name), getString(R.string.share_fb_msg),
 				getString(R.string.share_fb_msg), "https://play.google.com/store/apps/details?id=" + getPackageName(),
-				"https://raw.githubusercontent.com/tgioihan/TouchKid/master/bearforkidicon.png", new IShareFacebook() {
+				"https://raw.githubusercontent.com/tgioihan/BubbleMath/master/ic_launcher-web.png", new IShareFacebook() {
 
 					@Override
 					public void onShareSuccess() {
