@@ -132,6 +132,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 		Text mQuestionText = getQuesttionText();
 		mListView.setRun(false);
 		if (mGame.checkValue(value)) {
+			playCorrectSound();
 			mGame.incressRightAnswer();
 			if (mQuestionText != null) {
 				mQuestionText.registerEntityModifier(new ScaleModifier(Config.ANIMATE_DURATION, 1, 0,
@@ -139,7 +140,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override
@@ -150,7 +151,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 											@Override
 											public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+												playSwitchSound();
 											}
 
 											@Override
@@ -162,6 +163,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 						}, EaseBounceOut.getInstance()));
 			}
 		} else {
+			playWrongSound();
 			handler.postDelayed(new Runnable() {
 
 				@Override
@@ -291,7 +293,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+				playSwitchSound();
 			}
 
 			@Override
@@ -316,7 +318,7 @@ public class RunModeActivity extends BubbleGameActivity implements IOnMenuItemCl
 
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+				playSwitchSound();
 			}
 
 			@Override

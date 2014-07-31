@@ -242,7 +242,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 								@Override
 								public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+									playSwitchSound();
 								}
 
 								@Override
@@ -298,7 +298,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 										@Override
 										public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+											playSwitchSound();
 										}
 
 										@Override
@@ -336,7 +336,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override
@@ -371,7 +371,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 									@Override
 									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+										playSwitchSound();
 									}
 
 									@Override
@@ -441,11 +441,12 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 						int value = (Integer) item.getValue();
 						if (value == mGame.getResult()) {
 							Log.d(tag, tag + " right value " + value);
+							playCorrectSound();
 							mGame.incressRightAnswer();
 							mSeekBar.setPercent(mGame.getProcessPercent(), true);
 						} else {
+							playWrongSound();
 							item.onNormalState();
-							;
 							lockUserAction(true);
 						}
 					}
@@ -480,7 +481,7 @@ public class FruitCountModeActivity extends BubbleGameActivity {
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override

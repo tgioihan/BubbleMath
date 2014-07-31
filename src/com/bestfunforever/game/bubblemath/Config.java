@@ -34,7 +34,7 @@ public class Config {
 	public static final String KEY_LANGUAGE = "LANGUAGE";
 	public static final int KEY_LANGUAGE_NOTSET = 0;
 	public static final int KEY_LANGUAGE_ENG = 1;
-	public static final int KEY_LANGUAGE_VNI = 0;
+	public static final int KEY_LANGUAGE_VNI = 2;
 
 	public static int getMax(SharedPreferences preferences) {
 		return preferences.getInt(KEY_MAX, 10);

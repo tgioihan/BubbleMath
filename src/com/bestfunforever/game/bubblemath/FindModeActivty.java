@@ -214,7 +214,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 								@Override
 								public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+									playSwitchSound();
 								}
 
 								@Override
@@ -265,7 +265,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 										@Override
 										public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+											playSwitchSound();
 										}
 
 										@Override
@@ -298,7 +298,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override
@@ -333,7 +333,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 									@Override
 									public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+										playSwitchSound();
 									}
 
 									@Override
@@ -404,9 +404,11 @@ public class FindModeActivty extends BubbleGameActivity {
 						int value = (Integer) item.getValue();
 						if (value == mGame.getResult()) {
 							Log.d(tag, tag + " right value " + value);
+							playCorrectSound();
 							mGame.incressRightAnswer();
 							animateRightAnswer();
 						} else {
+							playWrongSound();
 							lockUserAction(true);
 							item.onNormalState();
 						}
@@ -440,7 +442,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override
@@ -475,7 +477,7 @@ public class FindModeActivty extends BubbleGameActivity {
 
 							@Override
 							public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+								playSwitchSound();
 							}
 
 							@Override

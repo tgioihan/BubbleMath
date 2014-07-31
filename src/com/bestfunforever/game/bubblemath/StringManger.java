@@ -27,8 +27,10 @@ public class StringManger {
 	public static final int FRUIT_MSG = 15;
 	public static final int FINDMODE_MSG = 16;
 	public static final int RUN_MSG = 17;
-	
-	SharedPreferences pref ;
+
+	protected static final int CONGRATULATION = 18;
+
+	SharedPreferences pref;
 
 	public StringManger(Context context) {
 		super();
@@ -103,6 +105,9 @@ public class StringManger {
 		case RUN_MSG:
 			result = context.getString(R.string.vni_runmode_msg);
 			break;
+		case CONGRATULATION:
+			result = context.getString(R.string.vni_congratulation);
+			break;
 		default:
 			break;
 		}
@@ -166,6 +171,9 @@ public class StringManger {
 			break;
 		case RUN_MSG:
 			result = context.getString(R.string.runmode_msg);
+			break;
+		case CONGRATULATION:
+			result = context.getString(R.string.congratulation);
 			break;
 		default:
 			break;

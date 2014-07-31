@@ -466,6 +466,15 @@ containing a value of this type.
          */
         public static final int zOrderOnTop=0x7f010010;
     }
+    public static final class bool {
+        /**  Enable Activity tracking 
+         */
+        public static final int ga_autoActivityTracking=0x7f0a0000;
+        public static final int ga_debug=0x7f0a0002;
+        /**  Enable automatic exception tracking 
+         */
+        public static final int ga_reportUncaughtExceptions=0x7f0a0001;
+    }
     public static final class color {
         public static final int com_facebook_blue=0x7f050019;
         public static final int com_facebook_loginview_text_color=0x7f05001d;
@@ -551,7 +560,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f02000d;
         public static final int com_facebook_loginbutton_silver=0x7f02000e;
         public static final int com_facebook_logo=0x7f02000f;
-        public static final int com_facebook_picker_default_separator_color=0x7f020047;
+        public static final int com_facebook_picker_default_separator_color=0x7f020048;
         public static final int com_facebook_picker_item_background=0x7f020010;
         public static final int com_facebook_picker_list_focused=0x7f020011;
         public static final int com_facebook_picker_list_longpressed=0x7f020012;
@@ -600,13 +609,14 @@ containing a value of this type.
         public static final int common_signin_btn_text_normal_light=0x7f02003d;
         public static final int common_signin_btn_text_pressed_dark=0x7f02003e;
         public static final int common_signin_btn_text_pressed_light=0x7f02003f;
-        public static final int ic_launcher=0x7f020040;
-        public static final int ic_plusone_medium_off_client=0x7f020041;
-        public static final int ic_plusone_small_off_client=0x7f020042;
-        public static final int ic_plusone_standard_off_client=0x7f020043;
-        public static final int ic_plusone_tall_off_client=0x7f020044;
-        public static final int powered_by_google_dark=0x7f020045;
-        public static final int powered_by_google_light=0x7f020046;
+        public static final int default_banner=0x7f020040;
+        public static final int ic_launcher=0x7f020041;
+        public static final int ic_plusone_medium_off_client=0x7f020042;
+        public static final int ic_plusone_small_off_client=0x7f020043;
+        public static final int ic_plusone_standard_off_client=0x7f020044;
+        public static final int ic_plusone_tall_off_client=0x7f020045;
+        public static final int powered_by_google_dark=0x7f020046;
+        public static final int powered_by_google_light=0x7f020047;
     }
     public static final class id {
         public static final int book_now=0x7f060010;
@@ -660,6 +670,9 @@ containing a value of this type.
         public static final int wrap_content=0x7f06000d;
     }
     public static final class integer {
+        /**  <string name="ga_trackingId">UA-37192711-1</string> 
+         */
+        public static final int ga_dispatchPeriod=0x7f070001;
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
@@ -682,18 +695,19 @@ containing a value of this type.
         public static final int fragment_main=0x7f030010;
     }
     public static final class string {
-        public static final int action_settings=0x7f04003d;
-        public static final int app_id=0x7f04003b;
+        public static final int action_settings=0x7f040040;
+        public static final int admobkey=0x7f04003d;
+        public static final int app_id=0x7f04003e;
         public static final int app_name=0x7f04003a;
-        public static final int apple=0x7f04004a;
+        public static final int apple=0x7f04004d;
         public static final int auth_client_needs_enabling_title=0x7f040001;
         public static final int auth_client_needs_installation_title=0x7f040002;
         public static final int auth_client_needs_update_title=0x7f040003;
         public static final int auth_client_play_services_err_notification_msg=0x7f040004;
         public static final int auth_client_requested_by_msg=0x7f040005;
         public static final int auth_client_using_bad_version_title=0x7f040000;
-        public static final int banana=0x7f04004b;
-        public static final int cherry=0x7f04004c;
+        public static final int banana=0x7f04004e;
+        public static final int cherry=0x7f04004f;
         public static final int com_facebook_choose_friends=0x7f04002f;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f040020;
         public static final int com_facebook_internet_permission_error_message=0x7f040033;
@@ -809,42 +823,56 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f04001e;
-        public static final int findmode=0x7f040042;
-        public static final int findmode_msg=0x7f040048;
-        public static final int fruitmode=0x7f040041;
-        public static final int fruitmode_msg=0x7f040049;
-        public static final int hello_world=0x7f04003c;
-        public static final int language=0x7f040046;
-        public static final int manggo=0x7f04004e;
-        public static final int more=0x7f040040;
-        public static final int music=0x7f040045;
-        public static final int pineapple=0x7f04004d;
-        public static final int runmode=0x7f040043;
-        public static final int runmode_msg=0x7f040047;
-        public static final int settings=0x7f04003f;
-        public static final int sound=0x7f040044;
-        public static final int start=0x7f04003e;
-        public static final int strawberry=0x7f04004f;
-        public static final int vni_apple=0x7f04005c;
-        public static final int vni_banana=0x7f04005d;
-        public static final int vni_cherry=0x7f04005e;
-        public static final int vni_findmode=0x7f040054;
-        public static final int vni_findmode_msg=0x7f04005a;
-        public static final int vni_fruitmode=0x7f040053;
-        public static final int vni_fruitmode_msg=0x7f04005b;
-        public static final int vni_language=0x7f040058;
-        public static final int vni_manggo=0x7f040060;
-        public static final int vni_more=0x7f040052;
-        public static final int vni_music=0x7f040057;
-        public static final int vni_pineapple=0x7f04005f;
-        public static final int vni_runmode=0x7f040055;
-        public static final int vni_runmode_msg=0x7f040059;
-        public static final int vni_settings=0x7f040051;
-        public static final int vni_sound=0x7f040056;
+        public static final int congratulation=0x7f040053;
+        public static final int findmode=0x7f040045;
+        public static final int findmode_msg=0x7f04004b;
+        public static final int fruitmode=0x7f040044;
+        public static final int fruitmode_msg=0x7f04004c;
+        public static final int ga_appName=0x7f04003c;
+        /**  Replace placeholder ID with your tracking ID 
+         */
+        public static final int ga_trackingId=0x7f04003b;
+        public static final int hello_world=0x7f04003f;
+        public static final int language=0x7f040049;
+        public static final int manggo=0x7f040051;
+        public static final int more=0x7f040043;
+        public static final int music=0x7f040048;
+        public static final int pineapple=0x7f040050;
+        public static final int runmode=0x7f040046;
+        public static final int runmode_msg=0x7f04004a;
+        public static final int settings=0x7f040042;
+        public static final int share_fb_msg=0x7f040054;
+        public static final int share_fb_msg_fail=0x7f040056;
+        public static final int share_fb_msg_fail_200=0x7f040057;
+        public static final int share_fb_msg_success=0x7f040055;
+        public static final int sound=0x7f040047;
+        public static final int start=0x7f040041;
+        public static final int strawberry=0x7f040052;
+        public static final int vni_apple=0x7f040064;
+        public static final int vni_banana=0x7f040065;
+        public static final int vni_cherry=0x7f040066;
+        public static final int vni_congratulation=0x7f04006a;
+        public static final int vni_findmode=0x7f04005c;
+        public static final int vni_findmode_msg=0x7f040062;
+        public static final int vni_fruitmode=0x7f04005b;
+        public static final int vni_fruitmode_msg=0x7f040063;
+        public static final int vni_language=0x7f040060;
+        public static final int vni_manggo=0x7f040068;
+        public static final int vni_more=0x7f04005a;
+        public static final int vni_music=0x7f04005f;
+        public static final int vni_pineapple=0x7f040067;
+        public static final int vni_runmode=0x7f04005d;
+        public static final int vni_runmode_msg=0x7f040061;
+        public static final int vni_settings=0x7f040059;
+        public static final int vni_share_fb_msg=0x7f04006b;
+        public static final int vni_share_fb_msg_fail=0x7f04006d;
+        public static final int vni_share_fb_msg_fail_200=0x7f04006e;
+        public static final int vni_share_fb_msg_success=0x7f04006c;
+        public static final int vni_sound=0x7f04005e;
         /**  VNI 
          */
-        public static final int vni_start=0x7f040050;
-        public static final int vni_strawberry=0x7f040061;
+        public static final int vni_start=0x7f040058;
+        public static final int vni_strawberry=0x7f040069;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */

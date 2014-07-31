@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_id">743538749017816</string>
-    <string name="app_name">BubbleMath</string>
+    <string name="admobkey">ca-app-pub-2714906120093430/3395480504</string>
+    <string name="app_id">259792264231738</string>
+    <string name="app_name">Kid\'s Math</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="start">Start</string>
     <string name="settings">Settings</string>
     <string name="more">More</string>
     <string name="fruitmode">Fruit Mode</string>
-    <string name="findmode">1..3 </string>
+    <string name="findmode">1..3 Mode</string>
     <string name="runmode">Run Mode</string>
     <string name="sound">Sound</string>
     <string name="music">Music</string>
@@ -23,14 +24,19 @@
     <string name="pineapple">Pineapple</string>
     <string name="manggo">Mango</string>
     <string name="strawberry">Strawberry</string>
+    <string name="congratulation">Congratulation!\n You have just pass this module.Have fun!</string>
+    <string name="share_fb_msg">Play math game for study and relax!</string>
+    <string name="share_fb_msg_success">Share success</string>
+    <string name="share_fb_msg_fail">Share failed.</string>
+    <string name="share_fb_msg_fail_200">Share failed</string>
 
     <!-- VNI -->
     <string name="vni_start">Bắt Đầu</string>
     <string name="vni_settings">Cài Đặt</string>
     <string name="vni_more">More</string>
-    <string name="vni_fruitmode">Hoa Quả</string>
-    <string name="vni_findmode">1..3 </string>
-    <string name="vni_runmode">Chạy</string>
+    <string name="vni_fruitmode">Trái Cây</string>
+    <string name="vni_findmode">C.Độ 1..3 </string>
+    <string name="vni_runmode">C.Độ Chạy</string>
     <string name="vni_sound">A.Thanh</string>
     <string name="vni_music">Nhạc</string>
     <string name="vni_language">Ng.Ngữ</string>
@@ -43,5 +49,10 @@
     <string name="vni_pineapple">Dứa</string>
     <string name="vni_manggo">Xoài</string>
     <string name="vni_strawberry">Dâu</string>
+    <string name="vni_congratulation">Chúc mừng ! \nBạn vừa hoàn thành phần chơi này. Chúc bạn vui vẻ!</string>
+    <string name="vni_share_fb_msg">Cùng tham gia game toán học , vừa học vừa chơi!</string>
+    <string name="vni_share_fb_msg_success">Chia sẻ thành công</string>
+    <string name="vni_share_fb_msg_fail">Chia sẻ thất bại.</string>
+    <string name="vni_share_fb_msg_fail_200">Bạn chưa cho phép ứng dụng được chia sẻ lên wall.</string>
 
 </resources>

@@ -29,13 +29,18 @@ import android.graphics.Color;
 import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
+import com.bestfunforever.andengine.uikit.activity.facebook.ILoginFacebook;
+import com.bestfunforever.andengine.uikit.activity.facebook.IShareFacebook;
 import com.bestfunforever.andengine.uikit.entity.ICheckedChange;
 import com.bestfunforever.andengine.uikit.entity.IClick;
 import com.bestfunforever.andengine.uikit.entity.ISelector;
+import com.bestfunforever.andengine.uikit.entity.Sprite.BubbleSprite;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.IMenuRectangle;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MenuModeGameRectang;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MenuRectang;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MenuSettingGameRectangle;
+import com.facebook.Session;
+import com.facebook.SessionState;
 
 public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
@@ -55,6 +60,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	private TextureRegion mBackRegion;
 	private StringManger stringManger;
 	private SharedPreferences pref;
+	private TiledTextureRegion fbRegion;
 
 	public void lockUserAction(boolean enable) {
 		if (menu != null) {
@@ -69,7 +75,14 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	}
 
 	@Override
+	protected String getAdmobKey() {
+		// TODO Auto-generated method stub
+		return getString(R.string.admobkey);
+	}
+
+	@Override
 	protected void onCreateResources() {
+		Log.d("", "key hash " + getKeyHash(getPackageName()));
 		FontFactory.setAssetBasePath("font/");
 		customFontTexture = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR);
 		FontFactory.setAssetBasePath("font/");
@@ -88,6 +101,11 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		this.mBackRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backAtlas, this, "back.png", 0, 0); // 64x32
 		backAtlas.load();
 
+		BitmapTextureAtlas fbAtlas = new BitmapTextureAtlas(this.getTextureManager(), (int) (84), (int) (84),
+				TextureOptions.BILINEAR);
+		fbRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(fbAtlas, this, "fb.png", 0, 0, 1, 1);
+		fbAtlas.load();
+
 		this.mSoundBitmapTextureAtlas = new BitmapTextureAtlas(getTextureManager(), 527, 388, TextureOptions.BILINEAR);
 		this.mSoundTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
 				this.mSoundBitmapTextureAtlas, this, "sound.png", 0, 0, 2, 1); // 64x32
@@ -100,6 +118,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 		loadSound();
 		loadMusic();
+		loadSwitchSound();
 	}
 
 	@Override
@@ -119,6 +138,20 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		}
 
 		stringManger = new StringManger(this);
+
+		BubbleSprite fbSprite = new BubbleSprite(30 * ratio, 0, ratio, fbRegion, getVertexBufferObjectManager());
+		fbSprite.setY(CAMERA_HEIGHT - fbSprite.getHeight() - 20 * ratio);
+		fbSprite.setClickListenner(new IClick() {
+
+			@Override
+			public void onCLick(IAreaShape view) {
+				playCLick();
+				shareFb();
+
+			}
+		});
+		mScene.attachChild(fbSprite);
+		mScene.registerTouchArea(fbSprite);
 
 		return mScene;
 	}
@@ -160,7 +193,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+				playSwitchSound();
 			}
 
 			@Override
@@ -331,7 +364,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+				playSwitchSound();
 			}
 
 			@Override
@@ -383,7 +416,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 	private void createAndShowSettingsMenuIfNeed() {
 		if (settingGame == null) {
-			settingGame = new MenuSettingGameRectangle(this,pref, stringManger, 218 * ratio, 300 * ratio, 424 * ratio,
+			settingGame = new MenuSettingGameRectangle(this, pref, stringManger, 218 * ratio, 300 * ratio, 424 * ratio,
 					600 * ratio, ratio, customFont, mSoundTextureRegion, mMusicTextureRegion, mBackRegion,
 					getVertexBufferObjectManager());
 			settingGame.setSoundCheckedChange(soundCheckedChange);
@@ -396,7 +429,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 
 			@Override
 			public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-
+				playSwitchSound();
 			}
 
 			@Override
@@ -406,7 +439,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		});
 		mCurrentMenuRectangle = settingGame;
 	}
-	
+
 	private IClick languageCheckedChange = new IClick() {
 
 		@Override
@@ -444,8 +477,39 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 			}
 		}
 	};
+
+	protected void changeLanguage() {
+		if (settingGame != null) {
+			lockUserAction(true);
+			settingGame.hide(new IEntityModifierListener() {
+
+				@Override
+				public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+
+				}
+
+				@Override
+				public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+					settingGame.show(new IEntityModifierListener() {
+
+						@Override
+						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
+
+						}
+
+						@Override
+						public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
+							lockUserAction(true);
+						}
+					});
+				}
+			});
+		}
+	}
+
 	private Sound clickSound;
 	private Music music;
+	private Sound switchSound;
 
 	private void loadSound() {
 		SoundFactory.setAssetBasePath("sound/");
@@ -457,32 +521,22 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 		}
 	}
 
-	protected void changeLanguage() {
-		if(settingGame!=null){
-			lockUserAction(true);
-			settingGame.hide(new IEntityModifierListener() {
-				
-				@Override
-				public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-					
-				}
-				
-				@Override
-				public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-					settingGame.show(new IEntityModifierListener() {
-						
-						@Override
-						public void onModifierStarted(IModifier<IEntity> pModifier, IEntity pItem) {
-							
-						}
-						
-						@Override
-						public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-							lockUserAction(true);
-						}
-					});
-				}
-			});
+	private void playSwitchSound() {
+		if (switchSound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			switchSound.play();
+		} else if (clickSound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadSwitchSound();
+			switchSound.play();
+		}
+	}
+
+	private void loadSwitchSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			switchSound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"switchsound.mp3");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -498,8 +552,7 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 	private void loadMusic() {
 		MusicFactory.setAssetBasePath("sound/");
 		try {
-			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(),
-					"dora_and_dreamland_forever.mp3");
+			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(), "bgsound.mp3");
 			music.setLooping(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -517,5 +570,35 @@ public class MainActivity extends PortraitAdmobGameActivity implements IClick {
 				music.play();
 			}
 		}
+	}
+
+	protected void shareFb() {
+		shareFacebookWithLogin(getString(R.string.app_name), getString(R.string.share_fb_msg),
+				getString(R.string.share_fb_msg), "https://play.google.com/store/apps/details?id=" + getPackageName(),
+				"https://raw.githubusercontent.com/tgioihan/TouchKid/master/bearforkidicon.png", new IShareFacebook() {
+
+					@Override
+					public void onShareSuccess() {
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								toastOnUIThread(getString(R.string.share_fb_msg_success));
+							}
+						});
+					}
+
+					@Override
+					public void onShareFail(int errorCode) {
+						Log.d("", "share error " + errorCode);
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								toastOnUIThread(getString(R.string.share_fb_msg_fail));
+							}
+						});
+					}
+				});
 	}
 }

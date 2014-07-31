@@ -169,11 +169,12 @@ public class MenuSettingGameRectangle extends ClipingRectangle implements IMenuR
 	}
 	
 	private void setColorSelected(BubbleSprite sprite){
-		sprite.setColor(180f / 255f, 180f / 255f, 180f / 255f);
+		sprite.setColor(1f, 1f, 1f);
+		
 	}
 	
 	private void setColorNormal(BubbleSprite sprite){
-		sprite.setColor(1f, 1f, 1f);
+		sprite.setColor(180f / 255f, 180f / 255f, 180f / 255f);
 	}
 
 

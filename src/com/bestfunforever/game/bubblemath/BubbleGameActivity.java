@@ -39,6 +39,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.bestfunforever.andengine.uikit.activity.PortraitAdmobGameActivity;
+import com.bestfunforever.andengine.uikit.activity.facebook.ILoginFacebook;
+import com.bestfunforever.andengine.uikit.activity.facebook.IShareFacebook;
 import com.bestfunforever.andengine.uikit.entity.IClick;
 import com.bestfunforever.andengine.uikit.entity.Sprite.BubbleSprite;
 import com.bestfunforever.andengine.uikit.entity.Sprite.SeekBar;
@@ -51,6 +53,8 @@ import com.bestfunforever.andengine.uikit.menu.BaseMenu.IOnMenuItemClickListener
 import com.bestfunforever.andengine.uikit.menu.CheckboxMenuItem;
 import com.bestfunforever.andengine.uikit.menu.IMenuItem;
 import com.bestfunforever.game.bubblemath.Entity.MainMenu.MathExpanableMenu;
+import com.facebook.Session;
+import com.facebook.SessionState;
 
 public abstract class BubbleGameActivity extends PortraitAdmobGameActivity implements IOnMenuItemClickListener,
 		ITickerTextListenner, ISeekBarListenner, IMenuListenner {
@@ -280,7 +284,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 							@Override
 							public void onModifierFinished(IModifier<IEntity> pModifier, IEntity pItem) {
-								tickTextManagable.setText("Chuc mung ban da vuot qua dc phan nay ");
+								tickTextManagable.setText(stringManger.getStringFromKey(StringManger.CONGRATULATION));
 								tickTextManagable.setY(messageFrame.getHeight() / 2 - tickTextManagable.getHeight() / 2);
 							}
 						}));
@@ -320,6 +324,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 				@Override
 				public void onCLick(IAreaShape view) {
+					playCLick();
 					shareFb();
 				}
 			});
@@ -327,6 +332,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 				@Override
 				public void onCLick(IAreaShape view) {
+					playCLick();
 					replay();
 				}
 			});
@@ -334,6 +340,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 				@Override
 				public void onCLick(IAreaShape view) {
+					playCLick();
 					finish();
 				}
 			});
@@ -396,8 +403,32 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 	}
 
 	protected void shareFb() {
-		// TODO Auto-generated method stub
+		shareFacebookWithLogin(getString(R.string.app_name), getString(R.string.share_fb_msg),
+				getString(R.string.share_fb_msg), "https://play.google.com/store/apps/details?id=" + getPackageName(),
+				"https://raw.githubusercontent.com/tgioihan/TouchKid/master/bearforkidicon.png", new IShareFacebook() {
 
+					@Override
+					public void onShareSuccess() {
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								toastOnUIThread(getString(R.string.share_fb_msg_success));
+							}
+						});
+					}
+
+					@Override
+					public void onShareFail(int errorCode) {
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								toastOnUIThread(getString(R.string.share_fb_msg_fail));
+							}
+						});
+					}
+				});
 	}
 
 	protected abstract void onCloseEndGame();
@@ -449,6 +480,9 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 
 	private Sound clickSound;
 	private Music music;
+	private Sound switchSound;
+	private Sound wrongSound;
+	private Sound correctsound;
 
 	protected void loadSound() {
 		SoundFactory.setAssetBasePath("sound/");
@@ -472,8 +506,7 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 	protected void loadMusic() {
 		MusicFactory.setAssetBasePath("sound/");
 		try {
-			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(),
-					"dora_and_dreamland_forever.mp3");
+			music = MusicFactory.createMusicFromAsset(getMusicManager(), getApplicationContext(), "bgsound.mp3");
 			music.setLooping(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -491,6 +524,69 @@ public abstract class BubbleGameActivity extends PortraitAdmobGameActivity imple
 				music.play();
 			}
 		}
+	}
+
+	protected void playSwitchSound() {
+		if (switchSound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			switchSound.play();
+		} else if (clickSound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadSwitchSound();
+			switchSound.play();
+		}
+	}
+
+	protected void loadSwitchSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			switchSound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"switchsound.mp3");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void playWrongSound() {
+		if (wrongSound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			wrongSound.play();
+		} else if (wrongSound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadWrongSound();
+			wrongSound.play();
+		}
+	}
+
+	protected void loadWrongSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			wrongSound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"49948__simon-rue__misslyckad-bana-v5.wav");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	protected void playCorrectSound() {
+		if (correctsound != null && Config.getSoundState(pref) == Config.KEY_ON) {
+			correctsound.play();
+		} else if (correctsound == null && Config.getSoundState(pref) == Config.KEY_ON) {
+			loadCorrectSound();
+			correctsound.play();
+		}
+	}
+
+	protected void loadCorrectSound() {
+		SoundFactory.setAssetBasePath("sound/");
+		try {
+			correctsound = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+					"correctsound.mp3");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	protected String getAdmobKey() {
+		// TODO Auto-generated method stub
+		return getString(R.string.admobkey);
 	}
 
 	@Override
